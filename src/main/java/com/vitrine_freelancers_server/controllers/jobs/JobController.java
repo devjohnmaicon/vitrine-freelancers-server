@@ -17,7 +17,11 @@ public class JobController {
 
     @PostMapping
     public JobEntity createJob(@RequestBody JobRequests job) {
-        return jobService.createJob(JobMapper.toEntity(job));
+        try{
+            return jobService.createJob(JobMapper.toEntity(job));
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating job");
+        }
     }
 
     @GetMapping
