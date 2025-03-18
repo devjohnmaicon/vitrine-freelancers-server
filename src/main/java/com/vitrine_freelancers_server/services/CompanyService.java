@@ -31,7 +31,7 @@ public class CompanyService {
     }
 
     public CompanyEntity findCompanyById(Long id) {
-        return companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Company not found"));
+        return companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
     }
 
     public CompanyEntity updateCompany(Long id, CompanyRequests companyRequests) {
@@ -43,7 +43,7 @@ public class CompanyService {
     public void disableCompany(Long id) {
         CompanyEntity company = findCompanyById(id);
         company.setName(company.getName() + " - Desativada");
-        company.setActive(false);
+        company.setIsActive(false);
         companyRepository.save(company);
     }
 }

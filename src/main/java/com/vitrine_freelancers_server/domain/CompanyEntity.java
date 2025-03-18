@@ -2,17 +2,19 @@ package com.vitrine_freelancers_server.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Builder
+@ToString(exclude = "jobs")
 @NoArgsConstructor
 @Entity(name = "companies")
 public class CompanyEntity {
@@ -28,18 +30,19 @@ public class CompanyEntity {
     @JsonIgnore
     List<JobEntity> jobs;
 
-    Boolean active = true;
+    Boolean isActive = true;
 
     @CreationTimestamp
     LocalDateTime createdAt = LocalDateTime.now();
-    LocalDateTime updatedAt = LocalDateTime.now();
+    @UpdateTimestamp
+    LocalDateTime updatedAt;
 
-    public CompanyEntity(Long id, String name, UserEntity user, List<JobEntity> jobs, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public CompanyEntity(Long id, String name, UserEntity user, List<JobEntity> jobs, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.user = user;
         this.jobs = jobs;
-        this.active = active;
+        this.isActive = isActive;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

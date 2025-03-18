@@ -1,12 +1,9 @@
 package com.vitrine_freelancers_server.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Entity(name = "jobs")
 public class JobEntity {
     @Id
@@ -27,12 +25,14 @@ public class JobEntity {
     Double dailyValue;
     String requirements;
     Boolean open = true;
+
     @ManyToOne
     @JoinColumn(name = "company_id", nullable = false)
     CompanyEntity company;
 
     @CreationTimestamp
     LocalDateTime createdAt = LocalDateTime.now();
-    LocalDateTime updatedAt = LocalDateTime.now();
+    @UpdateTimestamp
+    LocalDateTime updatedAt;
 
 }

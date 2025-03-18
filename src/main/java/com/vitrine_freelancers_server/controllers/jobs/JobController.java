@@ -51,7 +51,8 @@ public class JobController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateJob(@PathVariable Long id, @RequestBody JobRequests requestUpdate) {
         try {
-            return ResponseEntity.ok(jobService.updateJob(id, requestUpdate));
+            JobEntity jobUpdated = jobService.updateJob(id, requestUpdate);
+            return ResponseEntity.ok(JobMapper.toResponse(jobUpdated));
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
