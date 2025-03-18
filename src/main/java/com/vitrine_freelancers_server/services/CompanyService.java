@@ -40,7 +40,10 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
-    public void deleteCompany(Long id) {
-        companyRepository.deleteById(id);
+    public void disableCompany(Long id) {
+        CompanyEntity company = findCompanyById(id);
+        company.setName(company.getName() + " - Desativada");
+        company.setActive(false);
+        companyRepository.save(company);
     }
 }

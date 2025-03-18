@@ -2,6 +2,7 @@ package com.vitrine_freelancers_server.services;
 
 import com.vitrine_freelancers_server.controllers.companies.requests.CompanyRequests;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
+import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.repositories.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,10 +21,10 @@ import static org.mockito.Mockito.*;
 
 public class CompanyServiceTests {
     @Mock
-    private CompanyRepository companyRepository;
+    private UserService userService;
 
     @Mock
-    private UserService userService;
+    private CompanyRepository companyRepository;
 
     @InjectMocks
     private CompanyService companyService;
@@ -39,7 +40,12 @@ public class CompanyServiceTests {
                 1L,
                 "Farmácia do João",
                 user,
-                List.of(),
+                List.of(
+                        new JobEntity(1L, "FREELANCER", "Vaga para motoentregador", "2021-10-10", "14:00", "18:00", 100.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now()),
+                        new JobEntity(2L, "FREELANCER", "Vaga para garçon", "2021-10-10", "14:00", "18:00", 180.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now()),
+                        new JobEntity(3L, "FREELANCER", "Vaga para cozinheiro", "2021-10-10", "14:00", "18:00", 110.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now())
+                ),
+                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -63,6 +69,7 @@ public class CompanyServiceTests {
         CompanyEntity result = companyService.findCompanyById(1L);
 
         assertNotNull(result);
+        assertEquals(result.getJobs(), company.getJobs());
         verify(companyRepository, times(1)).findById(anyLong());
     }
 
@@ -83,6 +90,7 @@ public class CompanyServiceTests {
                 "Farmácia do João Updated",
                 user,
                 List.of(),
+                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -96,9 +104,13 @@ public class CompanyServiceTests {
     }
 
     @Test
-    void deleteCompanySuccessfully() {
-        doNothing().when(companyRepository).deleteById(1L);
-        companyService.deleteCompany(1L);
-        verify(companyRepository, times(1)).deleteById(anyLong());
+    void disableCompanySuccessfully() {
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+        when(companyRepository.save(any(CompanyEntity.class))).thenReturn(company);
+
+        companyService.disableCompany(1L);
+
+        verify(companyRepository, times(1)).findById(1L);
+        verify(companyRepository, times(1)).save(any(CompanyEntity.class));
     }
 }

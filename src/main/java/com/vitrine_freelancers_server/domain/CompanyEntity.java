@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
 @Entity(name = "companies")
 public class CompanyEntity {
     @Id
@@ -28,16 +28,19 @@ public class CompanyEntity {
     @JsonIgnore
     List<JobEntity> jobs;
 
-    @CreationTimestamp
-    LocalDateTime created_at = LocalDateTime.now();
-    LocalDateTime updated_at = LocalDateTime.now();
+    Boolean active = true;
 
-    public CompanyEntity(Long id, String name, UserEntity user, List<JobEntity> jobs, LocalDateTime created_at, LocalDateTime updated_at) {
+    @CreationTimestamp
+    LocalDateTime createdAt = LocalDateTime.now();
+    LocalDateTime updatedAt = LocalDateTime.now();
+
+    public CompanyEntity(Long id, String name, UserEntity user, List<JobEntity> jobs, boolean active, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.user = user;
         this.jobs = jobs;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.active = active;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

@@ -44,6 +44,7 @@ class JobServiceTests {
                 "Farmácia do João",
                 user,
                 List.of(),
+                true,
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );

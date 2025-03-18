@@ -53,10 +53,10 @@ public class CompanyController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCompany(@PathVariable Long id) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> disableCompany(@PathVariable Long id) {
         try {
-            companyService.deleteCompany(id);
+            companyService.disableCompany(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
