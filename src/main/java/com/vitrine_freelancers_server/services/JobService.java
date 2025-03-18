@@ -6,6 +6,8 @@ import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.mappers.JobMapper;
 import com.vitrine_freelancers_server.repositories.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +27,8 @@ public class JobService {
         return jobRepository.save(JobMapper.toEntity(request, company));
     }
 
-    public List<JobEntity> findJobsOpen() {
-        return jobRepository.findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc();
-
+    public Page<JobEntity> findJobsOpen(Pageable pageable) {
+        return jobRepository.findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc(pageable);
     }
 
     public JobEntity findJobById(Long id) {

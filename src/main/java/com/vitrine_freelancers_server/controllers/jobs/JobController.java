@@ -5,6 +5,8 @@ import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.mappers.JobMapper;
 import com.vitrine_freelancers_server.services.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +29,12 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getJobsOpen() {
+    public ResponseEntity<?> getJobsOpen(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            Pageable pageable) {
         try {
-            List<JobEntity> jobsOpen = jobService.findJobsOpen();
-            return ResponseEntity.ok(JobMapper.toResponse(jobsOpen));
+            Page<JobEntity> jobsOpen = jobService.findJobsOpen(pageable);
+            return ResponseEntity.ok(JobMapper.toResponse(jobsOpen.getContent()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

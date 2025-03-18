@@ -1,5 +1,6 @@
 package com.vitrine_freelancers_server.domain;
 
+import com.vitrine_freelancers_server.enums.JobType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -17,7 +18,7 @@ public class JobEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id = null;
-    String type;
+    JobType type;
     String description;
     String date;
     String startTime;

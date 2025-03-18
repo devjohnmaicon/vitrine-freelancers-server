@@ -1,8 +1,10 @@
 package com.vitrine_freelancers_server.controllers.jobs.response;
 
+import com.vitrine_freelancers_server.enums.JobType;
+
 public record JobReponse(
         Long id,
-        String type,
+        JobType type,
         String description,
         String date,
         String startTime,

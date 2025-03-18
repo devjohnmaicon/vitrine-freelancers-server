@@ -1,7 +1,9 @@
 package com.vitrine_freelancers_server.controllers.jobs.requests;
 
+import com.vitrine_freelancers_server.enums.JobType;
+
 public record JobRequests(
-        String type,
+        JobType type,
         String description,
         String date,
         String startTime,

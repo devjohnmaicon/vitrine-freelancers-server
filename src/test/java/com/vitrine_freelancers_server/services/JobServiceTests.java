@@ -5,12 +5,15 @@ import com.vitrine_freelancers_server.controllers.jobs.requests.JobRequests;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
+import com.vitrine_freelancers_server.enums.JobType;
 import com.vitrine_freelancers_server.repositories.JobRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,7 +53,7 @@ class JobServiceTests {
         );
         job1 = new JobEntity(
                 1L,
-                "FREELANCER",
+                JobType.FREELANCER,
                 "Vaga para motoentregador",
                 "2021-10-10",
                 "14:00",
@@ -67,7 +70,7 @@ class JobServiceTests {
     @Test
     void createJobSuccessfully() {
         JobRequests request = new JobRequests(
-                "FREELANCER",
+                JobType.FREELANCER,
                 "Vaga para motoentregador",
                 "2021-10-10",
                 "14:00",
@@ -78,7 +81,7 @@ class JobServiceTests {
         );
         JobEntity jobEntity = new JobEntity(
                 1L,
-                "FREELANCER",
+                JobType.FREELANCER,
                 "Vaga para motoentregador",
                 "2021-10-10",
                 "14:00",
@@ -102,14 +105,11 @@ class JobServiceTests {
 
     @Test
     void findJobsOpenSuccessfully() {
-        List<JobEntity> jobs = List.of(new JobEntity(/* parameters */));
-
-        when(jobRepository.findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc()).thenReturn(jobs);
-
-        List<JobEntity> result = jobService.findJobsOpen();
-
-        assertFalse(result.isEmpty());
-        verify(jobRepository, times(1)).findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc();
+        when(jobRepository.findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc(any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(job1)));
+        JobEntity result = jobService.findJobsOpen(PageRequest.of(0, 10)).getContent().getFirst();
+        assertNotNull(result);
+        assertEquals(job1, result);
+        verify(jobRepository, times(1)).findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc(any());
     }
 
     @Test
@@ -133,7 +133,7 @@ class JobServiceTests {
     @Test
     void updateJobSuccessfully() {
         JobRequests requestUpdate = new JobRequests(
-                "FREELANCER",
+                JobType.FREELANCER,
                 "Vaga para motorista",
                 "2021-10-10",
                 "14:00",
@@ -145,7 +145,7 @@ class JobServiceTests {
 
         JobEntity jobUpdated = new JobEntity(
                 1L,
-                "FREELANCER",
+                JobType.FREELANCER,
                 "Vaga para motorista",
                 "2021-10-10",
                 "14:00",
