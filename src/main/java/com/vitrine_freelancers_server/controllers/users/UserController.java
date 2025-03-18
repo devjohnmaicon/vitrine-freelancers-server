@@ -26,11 +26,15 @@ public class UserController {
 
     @GetMapping
     public List<UserEntity> getAllUsers() {
-        return userService.getAllUsers();
+        try {
+            return userService.getAllUsers();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<? > getUserById(@PathVariable Long id) {
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
             return ResponseEntity.status(HttpStatus.FOUND).body(userService.getUserById(id));
         } catch (Exception e) {
@@ -39,8 +43,13 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public UserEntity updateUser(@PathVariable Long id, @RequestBody UserEntity user) {
-        return userService.updateUser(id, user);
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserEntity user) {
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, user));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")

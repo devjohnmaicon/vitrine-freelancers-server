@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -13,7 +14,9 @@ public class UserService {
     private UserRepository userRepository;
 
     public UserEntity createUser(UserEntity user) {
-        findByEmail(user.getEmail());
+        findByEmail(user.getEmail()).ifPresent(u -> {
+            throw new RuntimeException("Email already exists");
+        });
         return userRepository.save(user);
     }
 
@@ -22,11 +25,11 @@ public class UserService {
     }
 
     public UserEntity getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("Id not found"));
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public UserEntity findByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Email not found"));
+    public Optional<UserEntity> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public UserEntity updateUser(Long id, UserEntity user) {

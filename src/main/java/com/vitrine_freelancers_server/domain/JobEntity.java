@@ -1,9 +1,7 @@
 package com.vitrine_freelancers_server.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,9 +26,13 @@ public class JobEntity {
     String endTime;
     Double dailyValue;
     String requirements;
-    Long companyId;
+    Boolean open = true;
+    @ManyToOne
+    @JoinColumn(name = "company_id", nullable = false)
+    CompanyEntity company;
+
     @CreationTimestamp
-    LocalDateTime created_at = LocalDateTime.now();
-    LocalDateTime updated_at = LocalDateTime.now();
+    LocalDateTime createdAt = LocalDateTime.now();
+    LocalDateTime updatedAt = LocalDateTime.now();
 
 }

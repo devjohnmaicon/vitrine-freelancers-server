@@ -1,5 +1,6 @@
 package com.vitrine_freelancers_server.controllers.companies;
 
+import com.vitrine_freelancers_server.controllers.companies.requests.CompanyRequests;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.services.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,32 +18,49 @@ public class CompanyController {
     private CompanyService companyService;
 
     @PostMapping
-    public ResponseEntity<CompanyEntity> createCompany(@RequestBody CompanyEntity company) {
-        CompanyEntity createdCompany = companyService.createCompany(company);
-        return ResponseEntity.ok(createdCompany);
+    public ResponseEntity<?> createCompany(@RequestBody CompanyRequests requests) {
+        try {
+            return ResponseEntity.ok(companyService.createCompany(requests));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping
     public ResponseEntity<List<CompanyEntity>> getAllCompanies() {
-        List<CompanyEntity> companies = companyService.getAllCompanies();
-        return ResponseEntity.ok(companies);
+        try {
+            return ResponseEntity.ok(companyService.getAllCompanies());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CompanyEntity> getCompanyById(@PathVariable Long id) {
-        Optional<CompanyEntity> company = companyService.getCompanyById(id);
-        return company.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(companyService.findCompanyById(id));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CompanyEntity> updateCompany(@PathVariable Long id, @RequestBody CompanyEntity company) {
-        Optional<CompanyEntity> updatedCompany = companyService.updateCompany(id, company);
-        return updatedCompany.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<CompanyEntity> updateCompany(@PathVariable Long id, @RequestBody CompanyRequests request) {
+        try {
+            Optional<CompanyEntity> updatedCompany = companyService.updateCompany(id, request);
+            return updatedCompany.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCompany(@PathVariable Long id) {
-        companyService.deleteCompany(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteCompany(@PathVariable Long id) {
+        try {
+            companyService.deleteCompany(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

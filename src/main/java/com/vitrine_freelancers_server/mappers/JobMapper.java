@@ -1,10 +1,11 @@
 package com.vitrine_freelancers_server.mappers;
 
+import com.vitrine_freelancers_server.controllers.jobs.requests.JobRequests;
+import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
-import com.vitrine_freelancers_server.controllers.jobs.JobRequests;
 
 public class JobMapper {
-    public static JobEntity toEntity(JobRequests jobRequests) {
+    public static JobEntity toEntity(JobRequests jobRequests, CompanyEntity company) {
         return JobEntity.builder()
                 .type(jobRequests.type())
                 .description(jobRequests.description())
@@ -13,7 +14,8 @@ public class JobMapper {
                 .endTime(jobRequests.endTime())
                 .dailyValue(jobRequests.dailyValue())
                 .requirements(jobRequests.requirements())
-                .companyId(jobRequests.companyId())
+                .company(company)
+                .open(true)
                 .build();
     }
 
@@ -26,7 +28,7 @@ public class JobMapper {
                 jobEntity.getEndTime(),
                 jobEntity.getDailyValue(),
                 jobEntity.getRequirements(),
-                jobEntity.getCompanyId()
+                jobEntity.getCompany().getId()
         );
     }
 }
