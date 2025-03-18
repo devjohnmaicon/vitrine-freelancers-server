@@ -55,9 +55,9 @@ public class JobController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteJob(@PathVariable Long id) {
+    public void closeJob(@PathVariable Long id) {
         try {
-            jobService.deleteJob(id);
+            jobService.closeJob(id);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

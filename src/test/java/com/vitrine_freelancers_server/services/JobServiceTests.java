@@ -167,15 +167,6 @@ class JobServiceTests {
     }
 
     @Test
-    void deleteJobSuccessfully() {
-        doNothing().when(jobRepository).deleteById(anyLong());
-
-        jobService.deleteJob(1L);
-
-        verify(jobRepository, times(1)).deleteById(anyLong());
-    }
-
-    @Test
     void closeJobSuccessfully() {
         JobEntity jobEntity = new JobEntity(/* parameters */);
 

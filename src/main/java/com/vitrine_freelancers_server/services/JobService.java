@@ -46,10 +46,6 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    public void deleteJob(Long id) {
-        jobRepository.deleteById(id);
-    }
-
 
     public void closeJob(Long id) {
         JobEntity job = findJobById(id);

@@ -53,7 +53,7 @@ public class CompanyController {
         }
     }
 
-    @PutMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> disableCompany(@PathVariable Long id) {
         try {
             companyService.disableCompany(id);
