@@ -47,8 +47,7 @@ public class CompanyController {
     @PutMapping("/{id}")
     public ResponseEntity<CompanyEntity> updateCompany(@PathVariable Long id, @RequestBody CompanyRequests request) {
         try {
-            Optional<CompanyEntity> updatedCompany = companyService.updateCompany(id, request);
-            return updatedCompany.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+            return ResponseEntity.ok(companyService.updateCompany(id, request));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(null);
         }

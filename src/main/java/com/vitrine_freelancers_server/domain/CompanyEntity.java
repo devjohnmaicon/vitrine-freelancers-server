@@ -13,7 +13,6 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 @Entity(name = "companies")
 public class CompanyEntity {
@@ -32,4 +31,13 @@ public class CompanyEntity {
     @CreationTimestamp
     LocalDateTime created_at = LocalDateTime.now();
     LocalDateTime updated_at = LocalDateTime.now();
+
+    public CompanyEntity(Long id, String name, UserEntity user, List<JobEntity> jobs, LocalDateTime created_at, LocalDateTime updated_at) {
+        this.id = id;
+        this.name = name;
+        this.user = user;
+        this.jobs = jobs;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
 }

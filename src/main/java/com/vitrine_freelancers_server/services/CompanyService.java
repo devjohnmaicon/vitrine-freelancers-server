@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CompanyService {
@@ -20,7 +19,7 @@ public class CompanyService {
     private UserService userService;
 
     public CompanyEntity createCompany(CompanyRequests companyRequest) {
-        UserEntity user = userService.getUserById(companyRequest.user_id());
+        UserEntity user = userService.findUserById(companyRequest.user_id());
         if (companyRepository.findByUser(user).isPresent()) {
             throw new RuntimeException("O usuário já possui uma empresa cadastrada");
         }
@@ -32,16 +31,13 @@ public class CompanyService {
     }
 
     public CompanyEntity findCompanyById(Long id) {
-        return companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+        return companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Company not found"));
     }
 
-    public Optional<CompanyEntity> updateCompany(Long id, CompanyRequests companyRequests) {
-        UserEntity user = userService.getUserById(companyRequests.user_id());
-        return companyRepository.findById(id).map(companyEntity -> {
-            companyEntity.setName(companyRequests.name());
-            companyEntity.setUser(user);
-            return companyRepository.save(companyEntity);
-        });
+    public CompanyEntity updateCompany(Long id, CompanyRequests companyRequests) {
+        CompanyEntity company = findCompanyById(id);
+        company.setName(companyRequests.name());
+        return companyRepository.save(company);
     }
 
     public void deleteCompany(Long id) {
