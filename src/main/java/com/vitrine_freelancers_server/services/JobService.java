@@ -52,4 +52,8 @@ public class JobService {
         job.setOpen(false);
         jobRepository.save(job);
     }
+
+    public List<JobEntity> findJobsByCompany(Long id) {
+        return jobRepository.findJobEntitiesByCompanyId(id);
+    }
 }

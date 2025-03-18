@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface JobRepository extends JpaRepository<JobEntity, Long> {
     List<JobEntity> findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc();
+
+    List<JobEntity> findJobEntitiesByCompanyId(Long id);
 }

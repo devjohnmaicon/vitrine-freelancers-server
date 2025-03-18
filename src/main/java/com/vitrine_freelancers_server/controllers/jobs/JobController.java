@@ -2,6 +2,7 @@ package com.vitrine_freelancers_server.controllers.jobs;
 
 import com.vitrine_freelancers_server.controllers.jobs.requests.JobRequests;
 import com.vitrine_freelancers_server.domain.JobEntity;
+import com.vitrine_freelancers_server.mappers.JobMapper;
 import com.vitrine_freelancers_server.services.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,10 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getjobsOpen() {
+    public ResponseEntity<?> getJobsOpen() {
         try {
-            return ResponseEntity.ok(jobService.findJobsOpen());
+            List<JobEntity> jobsOpen = jobService.findJobsOpen();
+            return ResponseEntity.ok(JobMapper.toResponse(jobsOpen));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -38,7 +40,8 @@ public class JobController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getJobById(@PathVariable Long id) {
         try {
-            return ResponseEntity.ok(jobService.findJobById(id));
+            JobEntity job = jobService.findJobById(id);
+            return ResponseEntity.ok(JobMapper.toResponse(job));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -60,6 +63,16 @@ public class JobController {
             jobService.closeJob(id);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @GetMapping("/company/{id}")
+    public ResponseEntity<?> getJobsByCompany(@PathVariable Long id) {
+        try {
+            List<JobEntity> jobsByCompany = jobService.findJobsByCompany(id);
+            return ResponseEntity.ok(JobMapper.toResponse(jobsByCompany));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
