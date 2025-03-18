@@ -36,7 +36,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
-            return ResponseEntity.status(HttpStatus.FOUND).body(userService.getUserById(id));
+            return ResponseEntity.status(HttpStatus.FOUND).body(userService.findUserById(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

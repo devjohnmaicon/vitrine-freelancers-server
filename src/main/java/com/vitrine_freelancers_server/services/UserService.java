@@ -24,7 +24,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public UserEntity getUserById(Long id) {
+    public UserEntity findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
