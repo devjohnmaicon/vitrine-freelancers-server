@@ -1,6 +1,9 @@
 package com.vitrine_freelancers_server.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +24,7 @@ public class UserEntity {
     private Long id;
     private String name;
     private String email;
+    private String password;
     @CreationTimestamp
     LocalDateTime created_at = LocalDateTime.now();
     @UpdateTimestamp

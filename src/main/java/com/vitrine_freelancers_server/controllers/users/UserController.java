@@ -15,15 +15,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody UserEntity user) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
     @GetMapping
     public List<UserEntity> getAllUsers() {
         try {

@@ -36,7 +36,7 @@ public class CompanyServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        user = new UserEntity(1L, "User 1", "user@email", LocalDateTime.now(), null);
+        user = new UserEntity(1L, "User 1", "user@email", "123", LocalDateTime.now(), null);
         company = new CompanyEntity(
                 1L,
                 "Farmácia do João",
