@@ -34,6 +34,7 @@ public class UserService {
                 .email(registerRequestDTO.email())
                 .name(registerRequestDTO.name())
                 .password(passwordEncoder.encode(registerRequestDTO.password()))
+                .role(registerRequestDTO.role())
                 .build();
         ;
         userRepository.save(user);

@@ -5,6 +5,7 @@ import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.enums.JobType;
+import com.vitrine_freelancers_server.enums.UserRole;
 import com.vitrine_freelancers_server.repositories.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ public class CompanyServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        user = new UserEntity(1L, "User 1", "user@email", "123", LocalDateTime.now(), null);
+        user = new UserEntity(1L, "User 1", "user@email", "123", UserRole.USER, LocalDateTime.now(), null);
         company = new CompanyEntity(
                 1L,
                 "Farmácia do João",
