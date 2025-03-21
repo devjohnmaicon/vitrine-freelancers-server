@@ -1,6 +1,6 @@
 package com.vitrine_freelancers_server.services;
 
-import com.vitrine_freelancers_server.controllers.companies.requests.CompanyRequests;
+import com.vitrine_freelancers_server.controllers.authentication.CreateCompanyDTO;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
@@ -55,11 +55,11 @@ public class CompanyServiceTests {
 
     @Test
     void createCompanySuccessfully() {
-        CompanyRequests request = new CompanyRequests("Farmácia do João", 1L);
+        CreateCompanyDTO request = new CreateCompanyDTO("Farmácia do João");
         when(userService.findUserById(1L)).thenReturn(user);
         when(companyRepository.save(any(CompanyEntity.class))).thenReturn(company);
 
-        CompanyEntity result = companyService.createCompany(request);
+        CompanyEntity result = companyService.createCompany(request, user.getId());
 
         assertNotNull(result);
         verify(companyRepository, times(1)).save(any(CompanyEntity.class));
@@ -86,7 +86,7 @@ public class CompanyServiceTests {
 
     @Test
     void updateCompanySuccessfully() {
-        CompanyRequests requestUpdate = new CompanyRequests("Farmácia do João Updated", 1L);
+        CreateCompanyDTO requestUpdate = new CreateCompanyDTO("Farmácia do João Updated");
         CompanyEntity companyUpdated = new CompanyEntity(
                 1L,
                 "Farmácia do João Updated",

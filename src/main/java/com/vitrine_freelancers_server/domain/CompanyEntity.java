@@ -21,6 +21,8 @@ public class CompanyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id = null;
+
+    @Column(unique = true)
     String name;
 
     @OneToOne

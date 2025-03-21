@@ -1,6 +1,6 @@
 package com.vitrine_freelancers_server.controllers.companies;
 
-import com.vitrine_freelancers_server.controllers.companies.requests.CompanyRequests;
+import com.vitrine_freelancers_server.controllers.authentication.CreateCompanyDTO;
 import com.vitrine_freelancers_server.controllers.companies.response.CompanyResponse;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.mappers.CompanyMapper;
@@ -17,15 +17,6 @@ public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
-
-    @PostMapping
-    public ResponseEntity<?> createCompany(@RequestBody CompanyRequests requests) {
-        try {
-            return ResponseEntity.ok(companyService.createCompany(requests));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 
     @GetMapping
     public ResponseEntity<List<CompanyResponse>> getAllCompanies() {
@@ -48,7 +39,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CompanyRequests request) {
+    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CreateCompanyDTO request) {
         try {
             CompanyEntity companyupdated = companyService.updateCompany(id, request);
             return ResponseEntity.ok(CompanyMapper.toResponse(companyupdated));

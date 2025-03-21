@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyEntity, Long> {
     Optional<CompanyEntity> findByUser(UserEntity user);
+
+    Optional<CompanyEntity> findByNameEquals(String name);
 }

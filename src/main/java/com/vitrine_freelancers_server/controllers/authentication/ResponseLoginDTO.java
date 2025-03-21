@@ -1,7 +1,7 @@
 package com.vitrine_freelancers_server.controllers.authentication;
 
-public record LoginRequestDTO(
+public record ResponseLoginDTO(
         String email,
-        String password
+        String token
 ) {
 }
