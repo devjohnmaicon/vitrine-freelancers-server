@@ -1,5 +1,6 @@
 package com.vitrine_freelancers_server.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vitrine_freelancers_server.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,8 @@ public class UserEntity implements UserDetails {
     private String name;
     @Column(unique = true)
     private String email;
+
+    @JsonIgnore
     private String password;
     private UserRole role;
     @CreationTimestamp

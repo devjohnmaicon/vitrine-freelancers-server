@@ -49,6 +49,10 @@ public class CompanyService {
         return companyRepository.findById(id).orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
     }
 
+    public CompanyEntity findCompanyByUser(UserEntity user) {
+        return companyRepository.findByUser(user).orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+    }
+
     public CompanyEntity updateCompany(Long id, CreateCompanyDTO companyRequests) {
         CompanyEntity company = findCompanyById(id);
         company.setName(companyRequests.name());

@@ -1,13 +1,19 @@
 package com.vitrine_freelancers_server.controllers.jobs;
 
 import com.vitrine_freelancers_server.controllers.jobs.requests.JobRequests;
+import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
+import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.mappers.JobMapper;
+import com.vitrine_freelancers_server.services.CompanyService;
 import com.vitrine_freelancers_server.services.JobService;
+import com.vitrine_freelancers_server.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,11 +24,16 @@ public class JobController {
 
     @Autowired
     private JobService jobService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private CompanyService companyService;
 
     @PostMapping
     public ResponseEntity<?> createJob(@RequestBody JobRequests request) {
         try {
-            return ResponseEntity.ok(jobService.createJob(request));
+            JobEntity createdJob = jobService.createJob(request);
+            return ResponseEntity.ok(JobMapper.toResponse(createdJob));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -71,13 +82,18 @@ public class JobController {
         }
     }
 
-    @GetMapping("/company/{id}")
-    public ResponseEntity<?> getJobsByCompany(@PathVariable Long id) {
+    @GetMapping("/company")
+    public ResponseEntity<?> getJobsByCompany() {
         try {
-            List<JobEntity> jobsByCompany = jobService.findJobsByCompany(id);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String currentUserEmail = authentication.getName();
+            UserEntity user = userService.findByEmail(currentUserEmail).orElseThrow(() -> new RuntimeException("Erro ao buscar jobs do usuário"));
+            CompanyEntity company = companyService.findCompanyByUser(user);
+            List<JobEntity> jobsByCompany = jobService.findJobsByCompany(company.getId());
             return ResponseEntity.ok(JobMapper.toResponse(jobsByCompany));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+
     }
 }
