@@ -7,6 +7,7 @@ import com.vitrine_freelancers_server.mappers.CompanyMapper;
 import com.vitrine_freelancers_server.services.CompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class CompanyController {
     private CompanyService companyService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CompanyResponse>> getAllCompanies() {
         try {
             List<CompanyEntity> allCompanies = companyService.getAllCompanies();
@@ -29,6 +31,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
     public ResponseEntity<?> getCompanyById(@PathVariable Long id) {
         try {
             CompanyEntity company = companyService.findCompanyById(id);
@@ -39,6 +42,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
     public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CreateCompanyDTO request) {
         try {
             CompanyEntity companyupdated = companyService.updateCompany(id, request);
@@ -49,6 +53,7 @@ public class CompanyController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> disableCompany(@PathVariable Long id) {
         try {
             companyService.disableCompany(id);

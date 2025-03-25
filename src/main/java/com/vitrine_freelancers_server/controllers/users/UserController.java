@@ -5,6 +5,7 @@ import com.vitrine_freelancers_server.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserEntity> getAllUsers() {
         try {
             return userService.getAllUsers();
@@ -25,6 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
             return ResponseEntity.status(HttpStatus.FOUND).body(userService.findUserById(id));
@@ -34,6 +37,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserEntity user) {
         try {
 
@@ -44,6 +48,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }

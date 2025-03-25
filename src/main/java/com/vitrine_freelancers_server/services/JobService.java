@@ -37,6 +37,7 @@ public class JobService {
 
     public JobEntity updateJob(Long id, JobRequests requestUpdate) {
         JobEntity job = findJobById(id);
+
         job.setType(requestUpdate.type());
         job.setDescription(requestUpdate.description());
         job.setDate(requestUpdate.date());

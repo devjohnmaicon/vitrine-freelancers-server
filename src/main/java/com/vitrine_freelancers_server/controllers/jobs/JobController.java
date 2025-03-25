@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +65,7 @@ public class JobController {
 
 
     @PutMapping("/{id}")
+    @PreAuthorize("#id == principal.id")
     public ResponseEntity<?> updateJob(@PathVariable Long id, @RequestBody JobRequests requestUpdate) {
         try {
             JobEntity jobUpdated = jobService.updateJob(id, requestUpdate);
@@ -74,6 +76,7 @@ public class JobController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
     public void closeJob(@PathVariable Long id) {
         try {
             jobService.closeJob(id);
@@ -83,6 +86,7 @@ public class JobController {
     }
 
     @GetMapping("/company")
+    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
     public ResponseEntity<?> getJobsByCompany() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
