@@ -43,9 +43,9 @@ public class CompanyServiceTests {
                 "Farmácia do João",
                 user,
                 List.of(
-                        new JobEntity(1L, JobType.FREELANCER, "Vaga para motoentregador", "2021-10-10", "14:00", "18:00", 100.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now()),
-                        new JobEntity(2L, JobType.FREELANCER, "Vaga para garçon", "2021-10-10", "14:00", "18:00", 180.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now()),
-                        new JobEntity(3L, JobType.FIXO, "Vaga para cozinheiro", "2021-10-10", "14:00", "18:00", 110.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now())
+                        new JobEntity(1L, JobType.FREELANCER, "deliveryman", "Vaga para motoentregador", "2021-10-10", "14:00", "18:00", 100.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now()),
+                        new JobEntity(2L, JobType.FREELANCER, "sushiman", "Vaga para garçon", "2021-10-10", "14:00", "18:00", 180.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now()),
+                        new JobEntity(3L, JobType.FIXO, "sushiman", "Vaga para cozinheiro", "2021-10-10", "14:00", "18:00", 110.0, "Possuir moto própria", true, null, LocalDateTime.now(), LocalDateTime.now())
                 ),
                 true,
                 LocalDateTime.now(),

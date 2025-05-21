@@ -4,6 +4,7 @@ import com.vitrine_freelancers_server.enums.JobType;
 
 public record JobRequests(
         JobType type,
+        String position,
         String description,
         String date,
         String startTime,

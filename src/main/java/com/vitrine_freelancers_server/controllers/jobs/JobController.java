@@ -10,7 +10,10 @@ import com.vitrine_freelancers_server.services.JobService;
 import com.vitrine_freelancers_server.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -34,7 +37,7 @@ public class JobController {
     public ResponseEntity<?> createJob(@RequestBody JobRequests request) {
         try {
             JobEntity createdJob = jobService.createJob(request);
-            return ResponseEntity.ok(JobMapper.toResponse(createdJob));
+            return ResponseEntity.status(HttpStatus.CREATED).body(JobMapper.toResponse(createdJob));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -43,8 +46,12 @@ public class JobController {
     @GetMapping
     public ResponseEntity<?> getJobsOpen(
             @RequestParam(required = false, defaultValue = "0") int page,
-            Pageable pageable) {
+            @RequestParam(required = false, defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "DESC") String sort
+    ) {
         try {
+            Sort.Direction direction = sort.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
             Page<JobEntity> jobsOpen = jobService.findJobsOpen(pageable);
             return ResponseEntity.ok(JobMapper.toResponse(jobsOpen.getContent()));
         } catch (Exception e) {
@@ -76,17 +83,18 @@ public class JobController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
-    public void closeJob(@PathVariable Long id) {
+    @PreAuthorize("#id == principal.id")
+    public ResponseEntity closeJob(@PathVariable Long id) {
         try {
             jobService.closeJob(id);
+            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
 
     @GetMapping("/company")
-    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
+    @PreAuthorize("#id == principal.id")
     public ResponseEntity<?> getJobsByCompany() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -100,4 +108,5 @@ public class JobController {
         }
 
     }
+
 }

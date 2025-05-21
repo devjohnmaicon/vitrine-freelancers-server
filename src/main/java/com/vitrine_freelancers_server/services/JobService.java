@@ -28,7 +28,7 @@ public class JobService {
     }
 
     public Page<JobEntity> findJobsOpen(Pageable pageable) {
-        return jobRepository.findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc(pageable);
+        return jobRepository.findJobEntitiesByOpenIsTrue(pageable);
     }
 
     public JobEntity findJobById(Long id) {
@@ -57,5 +57,9 @@ public class JobService {
 
     public List<JobEntity> findJobsByCompany(Long id) {
         return jobRepository.findJobEntitiesByCompanyId(id);
+    }
+
+    public List<JobEntity> findLastThreeJobs() {
+        return jobRepository.findTop3ByOpenIsTrueOrderByCreatedAtDesc();
     }
 }

@@ -55,6 +55,7 @@ class JobServiceTests {
         job1 = new JobEntity(
                 1L,
                 JobType.FREELANCER,
+                "deliveryman",
                 "Vaga para motoentregador",
                 "2021-10-10",
                 "14:00",
@@ -72,6 +73,7 @@ class JobServiceTests {
     void createJobSuccessfully() {
         JobRequests request = new JobRequests(
                 JobType.FREELANCER,
+                "deliveryman",
                 "Vaga para motoentregador",
                 "2021-10-10",
                 "14:00",
@@ -83,6 +85,7 @@ class JobServiceTests {
         JobEntity jobEntity = new JobEntity(
                 1L,
                 JobType.FREELANCER,
+                "deliveryman",
                 "Vaga para motoentregador",
                 "2021-10-10",
                 "14:00",
@@ -106,11 +109,11 @@ class JobServiceTests {
 
     @Test
     void findJobsOpenSuccessfully() {
-        when(jobRepository.findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc(any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(job1)));
+        when(jobRepository.findJobEntitiesByOpenIsTrue(any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(job1)));
         JobEntity result = jobService.findJobsOpen(PageRequest.of(0, 10)).getContent().getFirst();
         assertNotNull(result);
         assertEquals(job1, result);
-        verify(jobRepository, times(1)).findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc(any());
+        verify(jobRepository, times(1)).findJobEntitiesByOpenIsTrue(any());
     }
 
     @Test
@@ -135,6 +138,7 @@ class JobServiceTests {
     void updateJobSuccessfully() {
         JobRequests requestUpdate = new JobRequests(
                 JobType.FREELANCER,
+                "deliveryman",
                 "Vaga para motorista",
                 "2021-10-10",
                 "14:00",
@@ -147,6 +151,7 @@ class JobServiceTests {
         JobEntity jobUpdated = new JobEntity(
                 1L,
                 JobType.FREELANCER,
+                "deliveryman",
                 "Vaga para motorista",
                 "2021-10-10",
                 "14:00",

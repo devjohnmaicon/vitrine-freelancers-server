@@ -11,6 +11,7 @@ public class JobMapper {
     public static JobEntity toEntity(JobRequests jobRequests, CompanyEntity company) {
         return JobEntity.builder()
                 .type(jobRequests.type())
+                .position(jobRequests.position())
                 .description(jobRequests.description())
                 .date(jobRequests.date())
                 .startTime(jobRequests.startTime())
@@ -25,6 +26,7 @@ public class JobMapper {
     public static JobRequests toDto(JobEntity jobEntity) {
         return new JobRequests(
                 jobEntity.getType(),
+                jobEntity.getPosition(),
                 jobEntity.getDescription(),
                 jobEntity.getDate(),
                 jobEntity.getStartTime(),
@@ -39,12 +41,14 @@ public class JobMapper {
         return new JobReponse(
                 job.getId(),
                 job.getType(),
+                job.getPosition(),
                 job.getDescription(),
                 job.getDate(),
                 job.getStartTime(),
                 job.getEndTime(),
                 job.getDailyValue(),
                 job.getRequirements(),
+                job.getOpen(),
                 job.getCompany().getId(),
                 job.getCompany().getName()
         );

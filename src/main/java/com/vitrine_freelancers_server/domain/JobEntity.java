@@ -19,6 +19,7 @@ public class JobEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id = null;
     JobType type;
+    String position;
     String description;
     String date;
     String startTime;

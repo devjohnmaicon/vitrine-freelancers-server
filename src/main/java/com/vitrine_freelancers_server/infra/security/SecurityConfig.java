@@ -34,16 +34,33 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/jobs").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/jobs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/jobs/company").hasAnyRole("ADMIN", "COMPANY")
+                        .requestMatchers(HttpMethod.DELETE, "/jobs/:id").hasAnyRole("ADMIN", "COMPANY")
+                        .requestMatchers(HttpMethod.PUT, "/jobs/:id").hasAnyRole("ADMIN", "COMPANY")
+                        .requestMatchers(HttpMethod.POST, "/jobs").hasAnyRole("ADMIN", "COMPANY")
+
                         .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/users/:id").hasAnyRole("ADMIN", "USER")
 
-                        .requestMatchers(HttpMethod.POST, "/companies").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/companies").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/companies").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/companies/:id").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.GET, "/companies/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/companies/:id").hasAnyRole("ADMIN", "COMPANY")
+                        .requestMatchers(HttpMethod.PUT, "/companies/:id").hasAnyRole("ADMIN", "COMPANY")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .cors(
+                        httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(request -> {
+                            var cors = new org.springframework.web.cors.CorsConfiguration();
+                            cors.applyPermitDefaultValues();
+                            cors.addAllowedOrigin("http://localhost:3000");
+                            cors.checkOrigin("http://localhost:3000");
+                            return cors;
+                        })
+
+                );
+
         return http.build();
     }
 

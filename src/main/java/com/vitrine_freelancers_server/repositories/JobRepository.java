@@ -10,7 +10,9 @@ import java.util.List;
 
 @Repository
 public interface JobRepository extends JpaRepository<JobEntity, Long> {
-    Page<JobEntity> findJobEntitiesByOpenIsTrueOrderByCreatedAtDesc(Pageable pageable);
+    Page<JobEntity> findJobEntitiesByOpenIsTrue(Pageable pageable);
 
     List<JobEntity> findJobEntitiesByCompanyId(Long id);
+
+    List<JobEntity> findTop3ByOpenIsTrueOrderByCreatedAtDesc();
 }
