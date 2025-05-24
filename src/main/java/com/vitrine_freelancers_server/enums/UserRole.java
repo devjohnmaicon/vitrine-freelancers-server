@@ -1,7 +1,7 @@
 package com.vitrine_freelancers_server.enums;
 
 public enum UserRole {
-    USER("user"),
+    COMPANY("company"),
     ADMIN("admin");
     private String role;
 

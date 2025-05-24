@@ -24,10 +24,17 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
-        var loginIsValid = tokenService.isValidToken(token);
+        if (token == null && !request.getRequestURI().startsWith("/auth") && !request.getRequestURI().equals("/jobs") && !request.getRequestURI().matches("^/jobs/\\d+$")) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Token not provided\"}");
+            response.getWriter().flush();
+            return;
+        }
+        var userEmail = tokenService.isValidToken(token);
 
-        if (loginIsValid != null) {
-            UserEntity user = userRepository.findByEmail(loginIsValid).orElseThrow(() -> new RuntimeException("User Not Found"));
+        if (userEmail != null) {
+            UserEntity user = userRepository.getUserEntityByEmail(userEmail).orElseThrow(() -> new RuntimeException("Invalid token"));
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }

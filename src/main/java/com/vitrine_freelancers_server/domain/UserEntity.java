@@ -35,16 +35,17 @@ public class UserEntity implements UserDetails {
     private UserRole role;
     @CreationTimestamp
     LocalDateTime created_at = LocalDateTime.now();
+
     @UpdateTimestamp
     LocalDateTime updated_at;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (role == UserRole.ADMIN) {
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_COMPANY"));
         }
 
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_COMPANY"));
     }
 
     @Override

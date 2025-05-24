@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface JobRepository extends JpaRepository<JobEntity, Long> {
@@ -15,4 +16,6 @@ public interface JobRepository extends JpaRepository<JobEntity, Long> {
     List<JobEntity> findJobEntitiesByCompanyId(Long id);
 
     List<JobEntity> findTop3ByOpenIsTrueOrderByCreatedAtDesc();
+
+    Optional<JobEntity> findJobEntityByIdAndOpenIsTrue(Long id);
 }
