@@ -2,6 +2,7 @@ package com.vitrine_freelancers_server.mappers;
 
 import com.vitrine_freelancers_server.controllers.authentication.CreateCompanyDTO;
 import com.vitrine_freelancers_server.controllers.companies.response.CompanyResponse;
+import com.vitrine_freelancers_server.controllers.companies.response.CompanyResponse;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 

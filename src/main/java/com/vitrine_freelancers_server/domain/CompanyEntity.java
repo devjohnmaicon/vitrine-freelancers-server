@@ -2,6 +2,7 @@ package com.vitrine_freelancers_server.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,12 +40,12 @@ public class CompanyEntity {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
-    public CompanyEntity(Long id, String name, UserEntity user, List<JobEntity> jobs, boolean isActive, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public CompanyEntity(Long id, String name, UserEntity user, List<JobEntity> jobs, boolean isOpen, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.name = name;
         this.user = user;
         this.jobs = jobs;
-        this.isActive = isActive;
+        this.isActive = isOpen;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }

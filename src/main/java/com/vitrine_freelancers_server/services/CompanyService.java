@@ -1,6 +1,7 @@
 package com.vitrine_freelancers_server.services;
 
 import com.vitrine_freelancers_server.controllers.authentication.CreateCompanyDTO;
+import com.vitrine_freelancers_server.controllers.companies.requests.CompanyRequests;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.exceptions.CompanyAlreadyExistsException;
@@ -8,11 +9,10 @@ import com.vitrine_freelancers_server.exceptions.CompanyNotFoundException;
 import com.vitrine_freelancers_server.exceptions.UserNotAuthorizationException;
 import com.vitrine_freelancers_server.mappers.CompanyMapper;
 import com.vitrine_freelancers_server.repositories.CompanyRepository;
-import com.vitrine_freelancers_server.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,8 +23,6 @@ public class CompanyService {
 
     @Autowired
     private UserService userService;
-    @Autowired
-    private UserRepository userRepository;
 
     @Transactional
     public CompanyEntity createCompany(CreateCompanyDTO companyDTO, UserEntity user) {
@@ -34,6 +32,7 @@ public class CompanyService {
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException(e.getLocalizedMessage());
         }
+        return companyRepository.save(CompanyMapper.toEntity(companyRequest, user));
     }
 
     public List<CompanyEntity> getAllCompanies() {
