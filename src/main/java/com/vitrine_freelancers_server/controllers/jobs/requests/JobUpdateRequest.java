@@ -2,7 +2,7 @@ package com.vitrine_freelancers_server.controllers.jobs.requests;
 
 import com.vitrine_freelancers_server.enums.JobType;
 
-public record JobRequests(
+public record JobUpdateRequest(
         JobType type,
         String position,
         String description,
