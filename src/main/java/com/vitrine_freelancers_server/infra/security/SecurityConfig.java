@@ -1,12 +1,12 @@
 package com.vitrine_freelancers_server.infra.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService userDetailsService;
@@ -31,24 +30,32 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/jobs").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/jobs/{id}").permitAll()
-//                        .requestMatchers(HttpMethod.DELETE, "/jobs/:id").hasAnyRole("ADMIN", "COMPANY")
+                                .requestMatchers(HttpMethod.PUT, "/jobs/{id}").hasAnyRole("ADMIN", "COMPANY")
+                                .requestMatchers(HttpMethod.DELETE, "/jobs/{id}").hasAnyRole("ADMIN", "COMPANY")
+                                .requestMatchers(HttpMethod.GET, "/jobs").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/jobs").hasAnyRole("ADMIN", "COMPANY")
+                                .requestMatchers("/jobs/**").hasAnyRole("ADMIN")
+
 //                        .requestMatchers(HttpMethod.GET, "/jobs/**").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/jobs/company").hasAnyRole("ADMIN", "COMPANY")
-//                        .requestMatchers(HttpMethod.PUT, "/jobs/:id").hasAnyRole("ADMIN", "COMPANY")
-//                        .requestMatchers(HttpMethod.POST, "/jobs").hasAnyRole("ADMIN", "COMPANY")
 //
-//                        .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                                .requestMatchers("/users/**").hasRole("ADMIN")
 //                        .requestMatchers(HttpMethod.GET, "/users/:id").hasAnyRole("ADMIN", "USER")
 //
-//                        .requestMatchers(HttpMethod.GET, "/companies/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.GET, "/companies/:id").hasAnyRole("ADMIN", "COMPANY")
+                                .requestMatchers(HttpMethod.GET, "/companies/{id}").permitAll()
+                                .requestMatchers("/companies/**").hasRole("ADMIN")
 //                        .requestMatchers(HttpMethod.PUT, "/companies/:id").hasAnyRole("ADMIN", "COMPANY")
-                        .anyRequest().authenticated()
+                                .anyRequest().authenticated()
+                )
+                .exceptionHandling(
+                        exceptionHandling -> exceptionHandling
+                                .authenticationEntryPoint((request, response, authException) -> {
+                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                                })
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(

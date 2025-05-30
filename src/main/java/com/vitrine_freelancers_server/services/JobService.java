@@ -1,6 +1,6 @@
 package com.vitrine_freelancers_server.services;
 
-import com.vitrine_freelancers_server.controllers.jobs.requests.JobRequests;
+import com.vitrine_freelancers_server.controllers.jobs.requests.JobUpdateRequest;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
@@ -27,8 +27,8 @@ public class JobService {
 
 
     @PreAuthorize("hasRole('ROLE_COMPANY') or hasRole('ROLE_COMPANY')")
-    public JobEntity createJob(JobRequests request) {
-        CompanyEntity company = companyService.findCompanyById(request.company_id());
+    public JobEntity createJob(JobUpdateRequest request) {
+        CompanyEntity company = companyService.companyById(request.company_id());
         return jobRepository.save(JobMapper.toEntity(request, company));
     }
 
@@ -40,9 +40,10 @@ public class JobService {
         return jobRepository.findById(id).orElseThrow(() -> new JobNotFoundException("Job " + id + " not found"));
     }
 
-    public JobEntity updateJob(Long jobId, JobRequests requestUpdate, UserEntity user) {
+    public JobEntity updateJob(Long jobId, JobUpdateRequest requestUpdate, UserEntity user) {
         JobEntity job = validateUserAndJob(jobId, user);
         job.setType(requestUpdate.type());
+        job.setPosition(requestUpdate.position());
         job.setDescription(requestUpdate.description());
         job.setDate(requestUpdate.date());
         job.setStartTime(requestUpdate.startTime());
@@ -52,14 +53,12 @@ public class JobService {
         return jobRepository.save(job);
     }
 
-    @PreAuthorize("hasRole('ROLE_COMPANY') or hasRole('ROLE_ADMIN')")
     public void closeJob(Long id, UserEntity user) {
         JobEntity job = validateUserAndJob(id, user);
         job.setOpen(false);
         jobRepository.save(job);
     }
 
-    @PreAuthorize("hasRole('ROLE_COMPANY')")
     public List<JobEntity> findJobsByCompany(UserEntity user) {
         CompanyEntity company = companyService.findCompanyByUser(user);
         return jobRepository.findJobEntitiesByCompanyId(company.getId());
@@ -71,7 +70,7 @@ public class JobService {
 
     public JobEntity validateUserAndJob(Long id, UserEntity user) {
         CompanyEntity company = companyService.findCompanyByUser(user);
-        JobEntity job = jobRepository.findJobEntityByIdAndOpenIsTrue(id).orElseThrow(() -> new JobNotFoundException("O Job " + id + " não existe ou já foi fechado"));
+        JobEntity job = jobRepository.findJobEntityByIdAndOpenIsTrue(id).orElseThrow(() -> new JobNotFoundException("O job " + id + " não existe ou já foi fechado"));
         if (!job.getCompany().getId().equals(company.getId())) throw new UserNotAuthorizationException();
         return job;
     }

@@ -1,9 +1,9 @@
 package com.vitrine_freelancers_server.controllers.jobs;
 
-import com.vitrine_freelancers_server.controllers.jobs.requests.JobRequests;
+import com.vitrine_freelancers_server.controllers.jobs.requests.JobUpdateRequest;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
-import com.vitrine_freelancers_server.exceptions.ResponseSuccess;
+import com.vitrine_freelancers_server.exceptions.response.ResponseSuccess;
 import com.vitrine_freelancers_server.mappers.JobMapper;
 import com.vitrine_freelancers_server.services.JobService;
 import org.springframework.data.domain.Page;
@@ -29,7 +29,7 @@ public class JobController {
     private final String DEFAULT_STATUS = "success";
 
     @PostMapping
-    public ResponseEntity<?> createJob(@RequestBody JobRequests request) {
+    public ResponseEntity<?> createJob(@RequestBody JobUpdateRequest request) {
         JobEntity createdJob = jobService.createJob(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseSuccess(DEFAULT_STATUS, HttpStatus.CREATED.value(), JobMapper.toResponse(createdJob)));
     }
@@ -58,11 +58,13 @@ public class JobController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseSuccess> updateJob(@PathVariable Long id, @RequestBody JobRequests requestUpdate,
+    public ResponseEntity<ResponseSuccess> updateJob(@PathVariable Long id, @RequestBody JobUpdateRequest jobUpdate,
                                                      @AuthenticationPrincipal UserEntity userPrincipal
     ) {
-        jobService.updateJob(id, requestUpdate, userPrincipal);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseSuccess(DEFAULT_STATUS, HttpStatus.OK.value(), null));
+
+        JobEntity jobUpdated = jobService.updateJob(id, jobUpdate, userPrincipal);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseSuccess(
+                DEFAULT_STATUS, HttpStatus.OK.value(), JobMapper.toResponse(jobUpdated)));
     }
 
     @DeleteMapping("/{id}")

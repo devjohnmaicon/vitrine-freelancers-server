@@ -1,13 +1,14 @@
 package com.vitrine_freelancers_server.controllers.companies;
 
 import com.vitrine_freelancers_server.controllers.authentication.CreateCompanyDTO;
-import com.vitrine_freelancers_server.controllers.companies.response.CompanyResponse;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
+import com.vitrine_freelancers_server.domain.UserEntity;
+import com.vitrine_freelancers_server.exceptions.response.ResponseSuccess;
 import com.vitrine_freelancers_server.mappers.CompanyMapper;
 import com.vitrine_freelancers_server.services.CompanyService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,48 +17,58 @@ import java.util.List;
 @RequestMapping("/companies")
 public class CompanyController {
 
-    @Autowired
-    private CompanyService companyService;
+    private final String DEFAULT_STATUS = "success";
+    private final CompanyService companyService;
+
+    CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
 
     @GetMapping
-    public ResponseEntity<List<CompanyResponse>> getAllCompanies() {
-        try {
-            List<CompanyEntity> allCompanies = companyService.getAllCompanies();
-            return ResponseEntity.ok(CompanyMapper.toResponse(allCompanies));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    public ResponseEntity<?> companies() {
+        List<CompanyEntity> allCompanies = companyService.getAllCompanies();
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseSuccess(
+                        DEFAULT_STATUS,
+                        HttpStatus.OK.value(),
+                        allCompanies.stream().map(CompanyMapper::toResponse).toList()
+                )
+        );
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("#id == principal.id")
-    public ResponseEntity<?> getCompanyById(@PathVariable Long id) {
-        try {
-            CompanyEntity company = companyService.findCompanyById(id);
-            return ResponseEntity.ok(CompanyMapper.toResponse(company));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> companyById(@PathVariable Long id) {
+        CompanyEntity company = companyService.companyById(id);
+        return ResponseEntity.ok(new ResponseSuccess(
+                DEFAULT_STATUS,
+                HttpStatus.OK.value(),
+                CompanyMapper.toResponse(company)
+        ));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("#id == principal.id")
-    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable Long id, @RequestBody CreateCompanyDTO request) {
-        try {
-            CompanyEntity companyupdated = companyService.updateCompany(id, request);
-            return ResponseEntity.ok(CompanyMapper.toResponse(companyupdated));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    public ResponseEntity<ResponseSuccess> updateCompany(@PathVariable Long id, @RequestBody CreateCompanyDTO request,
+                                                         @AuthenticationPrincipal UserEntity user
+    ) {
+        CompanyEntity companyupdated = companyService.updateCompany(id, request, user);
+        return ResponseEntity.ok().body(
+                new ResponseSuccess(
+                        DEFAULT_STATUS,
+                        HttpStatus.OK.value(),
+                        CompanyMapper.toResponse(companyupdated)
+                )
+        );
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> disableCompany(@PathVariable Long id) {
-        try {
-            companyService.disableCompany(id);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<ResponseSuccess> disableCompany(@PathVariable Long id) {
+        companyService.inactivatedCompany(id);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(
+                new ResponseSuccess(
+                        DEFAULT_STATUS,
+                        HttpStatus.ACCEPTED.value(),
+                        null
+                )
+        );
     }
 }

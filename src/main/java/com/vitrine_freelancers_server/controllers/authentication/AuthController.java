@@ -1,6 +1,7 @@
 package com.vitrine_freelancers_server.controllers.authentication;
 
 import com.vitrine_freelancers_server.controllers.authentication.requests.LoginRequest;
+import com.vitrine_freelancers_server.exceptions.response.ResponseSuccess;
 import com.vitrine_freelancers_server.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,21 +20,19 @@ public class AuthController {
     private final RegisterService registerCompanyService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterUserCompanyDTO userCompanyDTO) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(registerCompanyService.registerUserAndCompany(userCompanyDTO));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<ResponseSuccess> register(@RequestBody RegisterUserCompanyDTO userCompanyDTO) {
+        ResponseTokenDTO response = registerCompanyService.registerUserAndCompany(userCompanyDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ResponseSuccess("Usuário e empresa criados com sucesso", HttpStatus.CREATED.value(), response)
+        );
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest requestDTO) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.login(requestDTO));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<ResponseSuccess> login(@RequestBody LoginRequest requestDTO) {
+        ResponseLoginDTO response = userService.login(requestDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseSuccess("Login realizado com sucesso", HttpStatus.OK.value(), response)
+        );
     }
 
 }

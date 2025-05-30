@@ -1,6 +1,6 @@
 package com.vitrine_freelancers_server.mappers;
 
-import com.vitrine_freelancers_server.controllers.jobs.requests.JobRequests;
+import com.vitrine_freelancers_server.controllers.jobs.requests.JobUpdateRequest;
 import com.vitrine_freelancers_server.controllers.jobs.response.JobReponse;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
@@ -8,23 +8,23 @@ import com.vitrine_freelancers_server.domain.JobEntity;
 import java.util.List;
 
 public class JobMapper {
-    public static JobEntity toEntity(JobRequests jobRequests, CompanyEntity company) {
+    public static JobEntity toEntity(JobUpdateRequest jobUpdateRequest, CompanyEntity company) {
         return JobEntity.builder()
-                .type(jobRequests.type())
-                .position(jobRequests.position())
-                .description(jobRequests.description())
-                .date(jobRequests.date())
-                .startTime(jobRequests.startTime())
-                .endTime(jobRequests.endTime())
-                .dailyValue(jobRequests.dailyValue())
-                .requirements(jobRequests.requirements())
+                .type(jobUpdateRequest.type())
+                .position(jobUpdateRequest.position())
+                .description(jobUpdateRequest.description())
+                .date(jobUpdateRequest.date())
+                .startTime(jobUpdateRequest.startTime())
+                .endTime(jobUpdateRequest.endTime())
+                .dailyValue(jobUpdateRequest.dailyValue())
+                .requirements(jobUpdateRequest.requirements())
                 .company(company)
                 .open(true)
                 .build();
     }
 
-    public static JobRequests toDto(JobEntity jobEntity) {
-        return new JobRequests(
+    public static JobUpdateRequest toDto(JobEntity jobEntity) {
+        return new JobUpdateRequest(
                 jobEntity.getType(),
                 jobEntity.getPosition(),
                 jobEntity.getDescription(),

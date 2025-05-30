@@ -3,64 +3,73 @@ package com.vitrine_freelancers_server.services;
 import com.vitrine_freelancers_server.controllers.authentication.CreateUserDTO;
 import com.vitrine_freelancers_server.controllers.authentication.ResponseLoginDTO;
 import com.vitrine_freelancers_server.controllers.authentication.requests.LoginRequest;
+import com.vitrine_freelancers_server.controllers.users.UserUpdateRequest;
 import com.vitrine_freelancers_server.domain.UserEntity;
+import com.vitrine_freelancers_server.enums.UserStatus;
+import com.vitrine_freelancers_server.exceptions.InvalidLoginException;
+import com.vitrine_freelancers_server.exceptions.UserEmailAlreadyExistsException;
+import com.vitrine_freelancers_server.exceptions.UserNotFoundException;
 import com.vitrine_freelancers_server.infra.security.TokenService;
 import com.vitrine_freelancers_server.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
-    TokenService tokenService;
+    final UserRepository userRepository;
+    final PasswordEncoder passwordEncoder;
+    final TokenService tokenService;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.tokenService = tokenService;
+    }
 
     @Transactional
     public UserEntity createUser(CreateUserDTO userDTO) {
-        findByEmail(userDTO.email()).ifPresent(user -> {
-            throw new UsernameNotFoundException("E-mail " + user.getEmail() + " already exists");
-        });
-        UserEntity user = UserEntity.builder().email(userDTO.email()).name(userDTO.name()).password(passwordEncoder.encode(userDTO.password())).role(userDTO.role()).build();
+        checkIfUserExists(userDTO.email());
+
+        UserEntity user = UserEntity.builder().email(userDTO.email()).name(userDTO.name()).password(passwordEncoder.encode(userDTO.password())).status(UserStatus.ACTIVE).role(userDTO.role()).build();
         ;
+
         return userRepository.save(user);
     }
 
-    public List<UserEntity> getAllUsers() {
+    public List<UserEntity> allUsers() {
         return userRepository.findAll();
     }
 
     public UserEntity findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
-    public Optional<UserEntity> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    private void checkIfUserExists(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new UserEmailAlreadyExistsException();
+        }
     }
 
-    public UserEntity updateUser(Long id, UserEntity user) {
+    public UserEntity updateUser(Long id, UserUpdateRequest user) {
         return null;
     }
 
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        UserEntity user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        user.setStatus(UserStatus.INACTIVE);
+        userRepository.save(user);
     }
 
     public ResponseLoginDTO login(LoginRequest requestDTO) {
-        UserEntity user = userRepository.findByEmail(requestDTO.email()).orElseThrow(() -> new RuntimeException("User not found"));
+        UserEntity user = userRepository.findByEmail(requestDTO.email()).orElseThrow(InvalidLoginException::new);
         if (passwordEncoder.matches(requestDTO.password(), user.getPassword())) {
             String token = tokenService.generateToken(user.getEmail());
             return new ResponseLoginDTO(user.getEmail(), token);
         } else {
-            throw new RuntimeException("Invalid user or password");
+            throw new InvalidLoginException();
         }
     }
 }

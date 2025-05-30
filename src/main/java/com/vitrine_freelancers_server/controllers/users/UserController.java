@@ -1,11 +1,10 @@
 package com.vitrine_freelancers_server.controllers.users;
 
 import com.vitrine_freelancers_server.domain.UserEntity;
+import com.vitrine_freelancers_server.exceptions.response.ResponseSuccess;
 import com.vitrine_freelancers_server.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,34 +12,39 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public List<UserEntity> getAllUsers() {
-        try {
-            return userService.getAllUsers();
-        } catch (Exception e) {
-            return null;
-        }
+    public ResponseEntity<ResponseSuccess> getAllUsers() {
+        List<UserEntity> users = userService.allUsers();
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseSuccess(
+                        "success",
+                        HttpStatus.OK.value(),
+                        users
+                )
+        );
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.status(HttpStatus.FOUND).body(userService.findUserById(id));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<ResponseSuccess> userById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.FOUND).body(
+                new ResponseSuccess(
+                        "success",
+                        HttpStatus.FOUND.value(),
+                        userService.findUserById(id)
+                )
+        );
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')  || #id == principal.id")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserEntity user) {
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest user) {
+        // TODO: Implement update logic
         try {
-
             return ResponseEntity.status(HttpStatus.OK).body(userService.updateUser(id, user));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -48,8 +52,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<ResponseSuccess> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(
+                new ResponseSuccess(
+                        "success",
+                        HttpStatus.ACCEPTED.value(),
+                        null
+                )
+        );
     }
 }

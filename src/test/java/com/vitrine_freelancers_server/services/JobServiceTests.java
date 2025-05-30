@@ -1,12 +1,13 @@
 package com.vitrine_freelancers_server.services;
 
 
-import com.vitrine_freelancers_server.controllers.jobs.requests.JobRequests;
+import com.vitrine_freelancers_server.controllers.jobs.requests.JobUpdateRequest;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.enums.JobType;
 import com.vitrine_freelancers_server.enums.UserRole;
+import com.vitrine_freelancers_server.enums.UserStatus;
 import com.vitrine_freelancers_server.repositories.JobRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class JobServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        user = new UserEntity(1L, "User 1", "user@email", "123", UserRole.USER, LocalDateTime.now(), null);
+        user = new UserEntity(1L, "User 1", "user@email", "123", UserStatus.ACTIVE, UserRole.COMPANY, LocalDateTime.now(), null);
         company = new CompanyEntity(
                 1L,
                 "Farmácia do João",
@@ -71,7 +72,7 @@ class JobServiceTests {
 
     @Test
     void createJobSuccessfully() {
-        JobRequests request = new JobRequests(
+        JobUpdateRequest request = new JobUpdateRequest(
                 JobType.FREELANCER,
                 "deliveryman",
                 "Vaga para motoentregador",
@@ -98,7 +99,7 @@ class JobServiceTests {
                 LocalDateTime.now()
         );
 
-        when(companyService.findCompanyById(anyLong())).thenReturn(company);
+        when(companyService.companyById(anyLong())).thenReturn(company);
         when(jobRepository.save(any(JobEntity.class))).thenReturn(jobEntity);
 
         JobEntity result = jobService.createJob(request);
@@ -130,13 +131,13 @@ class JobServiceTests {
         when(jobRepository.findById(2L)).thenReturn(Optional.empty());
         Exception exception = assertThrows(RuntimeException.class, () -> jobService.findJobById(1L));
 
-        assertEquals("Job not found", exception.getMessage());
+        assertEquals("Job " + 1L + " not found", exception.getMessage());
         verify(jobRepository, times(1)).findById(anyLong());
     }
 
     @Test
     void updateJobSuccessfully() {
-        JobRequests requestUpdate = new JobRequests(
+        JobUpdateRequest requestUpdate = new JobUpdateRequest(
                 JobType.FREELANCER,
                 "deliveryman",
                 "Vaga para motorista",
@@ -147,6 +148,7 @@ class JobServiceTests {
                 "Possuir moto própria",
                 1L
         );
+
 
         JobEntity jobUpdated = new JobEntity(
                 1L,
@@ -165,23 +167,41 @@ class JobServiceTests {
         );
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job1));
+        when(jobRepository.findJobEntityByIdAndOpenIsTrue(1L)).thenReturn(Optional.of(job1));
+        when(companyService.findCompanyByUser(user)).thenReturn(company);
         when(jobRepository.save(any(JobEntity.class))).thenReturn(jobUpdated);
-        JobEntity result = jobService.updateJob(1L, requestUpdate);
 
+        JobEntity result = jobService.updateJob(1L, requestUpdate, user);
         assertNotNull(result);
         verify(jobRepository, times(1)).save(any(JobEntity.class));
     }
 
     @Test
     void closeJobSuccessfully() {
-        JobEntity jobEntity = new JobEntity(/* parameters */);
 
-        when(jobRepository.findById(anyLong())).thenReturn(Optional.of(jobEntity));
-        when(jobRepository.save(any(JobEntity.class))).thenReturn(jobEntity);
+        JobEntity jobClosed = new JobEntity(
+                1L,
+                JobType.FREELANCER,
+                "deliveryman",
+                "Vaga para motorista",
+                "2021-10-10",
+                "14:00",
+                "18:00",
+                150.0,
+                "Possuir moto própria",
+                false,
+                company,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        jobService.closeJob(1L);
+        when(jobRepository.findById(1L)).thenReturn(Optional.of(job1));
+        when(jobRepository.save(any(JobEntity.class))).thenReturn(jobClosed);
+        when(jobRepository.findJobEntityByIdAndOpenIsTrue(1L)).thenReturn(Optional.of(job1));
+        when(companyService.findCompanyByUser(user)).thenReturn(company);
 
-        assertFalse(false);
+        jobService.closeJob(1L, user);
+
         verify(jobRepository, times(1)).save(any(JobEntity.class));
     }
 

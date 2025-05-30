@@ -24,7 +24,8 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
-        if (token == null && !request.getRequestURI().startsWith("/auth") && !request.getRequestURI().equals("/jobs") && !request.getRequestURI().matches("^/jobs/\\d+$")) {
+        if (token == null && !request.getRequestURI().startsWith("/auth") && !request.getRequestURI().equals("/jobs")
+                && !request.getRequestURI().matches("^/jobs/\\d+$") && !request.getRequestURI().matches("^/companies/\\d+$")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\": \"Token not provided\"}");

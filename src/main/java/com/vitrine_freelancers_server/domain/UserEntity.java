@@ -2,6 +2,7 @@ package com.vitrine_freelancers_server.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.vitrine_freelancers_server.enums.UserRole;
+import com.vitrine_freelancers_server.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,12 +28,15 @@ public class UserEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
     @Column(unique = true)
     private String email;
 
     @JsonIgnore
     private String password;
+    private UserStatus status;
     private UserRole role;
+
     @CreationTimestamp
     LocalDateTime created_at = LocalDateTime.now();
 

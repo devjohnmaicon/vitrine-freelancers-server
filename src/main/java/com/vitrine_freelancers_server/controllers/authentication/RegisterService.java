@@ -20,15 +20,11 @@ public class RegisterService {
 
     @Transactional
     public ResponseTokenDTO registerUserAndCompany(RegisterUserCompanyDTO userCompanyDTO) {
-        try {
-            UserEntity createdUser = userService.createUser(userCompanyDTO.user());
-            CompanyEntity createdCompany = companyService.createCompany(userCompanyDTO.company(), createdUser.getId());
-            String token = tokenService.generateToken(createdUser.getEmail());
-            ResponseTokenDTO tokenDTO = new ResponseTokenDTO(createdUser.getEmail(), createdCompany.getName(), token);
-            return tokenDTO;
-        } catch (Exception e) {
-            throw new RuntimeException("Error creating user and company:  " + e.getMessage());
-        }
+        UserEntity createdUser = userService.createUser(userCompanyDTO.user());
+        CompanyEntity createdCompany = companyService.createCompany(userCompanyDTO.company(), createdUser);
 
+        String token = tokenService.generateToken(createdUser.getEmail());
+
+        return new ResponseTokenDTO(createdUser.getEmail(), createdCompany.getName(), token);
     }
 }
