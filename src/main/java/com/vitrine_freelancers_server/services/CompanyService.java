@@ -1,7 +1,6 @@
 package com.vitrine_freelancers_server.services;
 
 import com.vitrine_freelancers_server.controllers.authentication.CreateCompanyDTO;
-import com.vitrine_freelancers_server.controllers.companies.requests.CompanyRequests;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.exceptions.CompanyAlreadyExistsException;
@@ -32,7 +31,6 @@ public class CompanyService {
         } catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException(e.getLocalizedMessage());
         }
-        return companyRepository.save(CompanyMapper.toEntity(companyRequest, user));
     }
 
     public List<CompanyEntity> getAllCompanies() {
@@ -64,7 +62,7 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
-    public void inactivatedCompany(Long id) {
+    public void inactivateCompany(Long id) {
         CompanyEntity company = companyById(id);
         company.setName(company.getName() + " - Desativada");
         company.setIsActive(false);

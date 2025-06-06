@@ -1,7 +1,8 @@
 package com.vitrine_freelancers_server.controllers.companies;
 
-import com.vitrine_freelancers_server.controllers.companies.requests.CompanyRequests;
+import com.vitrine_freelancers_server.controllers.authentication.CreateCompanyDTO;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
+import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.exceptions.response.ResponseSuccess;
 import com.vitrine_freelancers_server.mappers.CompanyMapper;
 import com.vitrine_freelancers_server.services.CompanyService;
@@ -11,7 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/companies")
@@ -62,7 +62,7 @@ public class CompanyController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseSuccess> disableCompany(@PathVariable Long id) {
-        companyService.inactivatedCompany(id);
+        companyService.inactivateCompany(id);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(
                 new ResponseSuccess(
                         DEFAULT_STATUS,

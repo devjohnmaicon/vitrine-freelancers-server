@@ -49,6 +49,8 @@ public class JobMapper {
                 job.getDailyValue(),
                 job.getRequirements(),
                 job.getOpen(),
+                job.getCreatedAt().toString(),
+                job.getUpdatedAt().toString(),
                 job.getCompany().getId(),
                 job.getCompany().getName()
         );

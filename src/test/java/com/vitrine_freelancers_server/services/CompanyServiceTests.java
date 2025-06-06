@@ -7,6 +7,7 @@ import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.enums.JobType;
 import com.vitrine_freelancers_server.enums.UserRole;
 import com.vitrine_freelancers_server.enums.UserStatus;
+import com.vitrine_freelancers_server.exceptions.CompanyAlreadyExistsException;
 import com.vitrine_freelancers_server.exceptions.CompanyNotFoundException;
 import com.vitrine_freelancers_server.repositories.CompanyRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,8 +28,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CompanyServiceTests {
-    @Mock
-    private UserService userService;
 
     @Mock
     private CompanyRepository companyRepository;
@@ -79,7 +78,7 @@ public class CompanyServiceTests {
         CreateCompanyDTO companyDTO = new CreateCompanyDTO("Company 1");
         when(companyRepository.existsByName(companyDTO.name())).thenReturn(true);
 
-        Exception exception = assertThrows(RuntimeException.class, () -> companyService.createCompany(companyDTO, createUser()));
+        Exception exception = assertThrows(CompanyAlreadyExistsException.class, () -> companyService.createCompany(companyDTO, createUser()));
 
         verify(companyRepository).existsByName(companyDTO.name());
         verify(companyRepository, never()).findById(anyLong());
@@ -133,10 +132,18 @@ public class CompanyServiceTests {
 
     @Test
     void inactivatedCompanySuccessfully() {
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
-        when(companyRepository.save(any(CompanyEntity.class))).thenReturn(company);
+        Long companyId = 1L;
+        CompanyEntity companyFound = createCompany();
+        CompanyEntity companyUpdated = companyFound.toBuilder()
+                .name(companyFound.getName() + " - Desativada")
+                .isActive(false)
+                .build();
+        ;
 
-        companyService.inactivatedCompany(1L);
+        when(companyRepository.findById(companyId)).thenReturn(Optional.of(companyFound));
+        when(companyRepository.save(any(CompanyEntity.class))).thenReturn(companyUpdated);
+
+        companyService.inactivateCompany(companyId);
 
         verify(companyRepository, times(1)).findById(1L);
         verify(companyRepository, times(1)).save(any(CompanyEntity.class));
@@ -152,6 +159,17 @@ public class CompanyServiceTests {
                 .role(UserRole.COMPANY)
                 .updated_at(null)
                 .created_at(LocalDateTime.now())
+                .build();
+    }
+
+    private CompanyEntity createCompany() {
+        return CompanyEntity.builder()
+                .id(1L)
+                .name("Farmácia do João")
+                .user(createUser())
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
     }
 }

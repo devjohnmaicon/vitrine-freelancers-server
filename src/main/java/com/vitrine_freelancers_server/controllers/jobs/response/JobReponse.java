@@ -13,6 +13,8 @@ public record JobReponse(
         Double dailyValue,
         String requirements,
         Boolean open,
+        String createdAt,
+        String updatedAt,
         Long companyId,
         String companyName
 ) {
