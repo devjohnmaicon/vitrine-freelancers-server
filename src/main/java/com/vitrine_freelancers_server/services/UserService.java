@@ -4,6 +4,7 @@ import com.vitrine_freelancers_server.controllers.authentication.CreateUserDTO;
 import com.vitrine_freelancers_server.controllers.authentication.ResponseLoginDTO;
 import com.vitrine_freelancers_server.controllers.authentication.requests.LoginRequest;
 import com.vitrine_freelancers_server.controllers.users.UserUpdateRequest;
+import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.enums.UserStatus;
 import com.vitrine_freelancers_server.exceptions.InvalidLoginException;
@@ -22,11 +23,13 @@ public class UserService {
     final UserRepository userRepository;
     final PasswordEncoder passwordEncoder;
     final TokenService tokenService;
+    final CompanyService companyService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TokenService tokenService, CompanyService companyService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.tokenService = tokenService;
+        this.companyService = companyService;
     }
 
     @Transactional
@@ -65,9 +68,10 @@ public class UserService {
 
     public ResponseLoginDTO login(LoginRequest requestDTO) {
         UserEntity user = userRepository.findByEmail(requestDTO.email()).orElseThrow(InvalidLoginException::new);
+        CompanyEntity company = companyService.findCompanyByUser(user);
         if (passwordEncoder.matches(requestDTO.password(), user.getPassword())) {
             String token = tokenService.generateToken(user.getEmail());
-            return new ResponseLoginDTO(user.getEmail(), token);
+            return new ResponseLoginDTO(user.getEmail(), company.getId(), token);
         } else {
             throw new InvalidLoginException();
         }

@@ -20,8 +20,6 @@ public class CompanyService {
     @Autowired
     private CompanyRepository companyRepository;
 
-    @Autowired
-    private UserService userService;
 
     @Transactional
     public CompanyEntity createCompany(CreateCompanyDTO companyDTO, UserEntity user) {
