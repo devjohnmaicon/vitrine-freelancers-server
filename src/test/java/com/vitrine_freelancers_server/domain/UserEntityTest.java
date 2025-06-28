@@ -16,12 +16,10 @@ public class UserEntityTest {
     public void sholdReturnAuthorities() {
         UserEntity adminUser = UserEntity.builder()
                 .email("admin@example.com")
-                .role(com.vitrine_freelancers_server.enums.UserRole.ADMIN)
                 .build();
 
         UserEntity companyUser = UserEntity.builder()
                 .email("company@example.com")
-                .role(com.vitrine_freelancers_server.enums.UserRole.COMPANY)
                 .build();
 
         var adminAuthorities = adminUser.getAuthorities();

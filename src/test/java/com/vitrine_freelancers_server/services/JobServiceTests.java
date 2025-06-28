@@ -1,12 +1,9 @@
 package com.vitrine_freelancers_server.services;
 
 
-import com.vitrine_freelancers_server.controllers.jobs.requests.JobUpdateRequest;
-import com.vitrine_freelancers_server.domain.CompanyEntity;
-import com.vitrine_freelancers_server.domain.JobEntity;
-import com.vitrine_freelancers_server.domain.UserEntity;
+import com.vitrine_freelancers_server.controllers.jobs.requests.JobCreateOrUpdateRequest;
+import com.vitrine_freelancers_server.domain.*;
 import com.vitrine_freelancers_server.enums.JobType;
-import com.vitrine_freelancers_server.enums.UserRole;
 import com.vitrine_freelancers_server.enums.UserStatus;
 import com.vitrine_freelancers_server.repositories.JobRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,12 +36,16 @@ class JobServiceTests {
 
     private CompanyEntity company;
     private UserEntity user;
+    private Permission permission;
+    private Role role;
     private JobEntity job1;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        user = new UserEntity(1L, "User 1", "user@email", "123", UserStatus.ACTIVE, UserRole.COMPANY, LocalDateTime.now(), null);
+        permission = new Permission(1L, "PERMISSION_1");
+        role = new Role(1L, "COMPNY", "Descrição", Set.of(user), Set.of(permission));
+        user = new UserEntity(1L, "User 1", "user@email", "123", UserStatus.ACTIVE, Set.of(role), company, LocalDateTime.now(), null);
         company = new CompanyEntity(
                 1L,
                 "Farmácia do João",
@@ -72,7 +74,7 @@ class JobServiceTests {
 
     @Test
     void createJobSuccessfully() {
-        JobUpdateRequest request = new JobUpdateRequest(
+        JobCreateOrUpdateRequest request = new JobCreateOrUpdateRequest(
                 JobType.FREELANCER,
                 "deliveryman",
                 "Vaga para motoentregador",
@@ -80,8 +82,7 @@ class JobServiceTests {
                 "14:00",
                 "18:00",
                 100.0,
-                "Possuir moto própria",
-                1L
+                "Possuir moto própria"
         );
         JobEntity jobEntity = new JobEntity(
                 1L,
@@ -111,7 +112,7 @@ class JobServiceTests {
     @Test
     void findJobsOpenSuccessfully() {
         when(jobRepository.findJobEntitiesByOpenIsTrue(any(PageRequest.class))).thenReturn(new PageImpl<>(List.of(job1)));
-        JobEntity result = jobService.findJobsOpen(PageRequest.of(0, 10)).getContent().getFirst();
+        JobEntity result = jobService.findAllJobsOpen(PageRequest.of(0, 10)).getContent().getFirst();
         assertNotNull(result);
         assertEquals(job1, result);
         verify(jobRepository, times(1)).findJobEntitiesByOpenIsTrue(any());
@@ -137,7 +138,7 @@ class JobServiceTests {
 
     @Test
     void updateJobSuccessfully() {
-        JobUpdateRequest requestUpdate = new JobUpdateRequest(
+        JobCreateOrUpdateRequest requestUpdate = new JobCreateOrUpdateRequest(
                 JobType.FREELANCER,
                 "deliveryman",
                 "Vaga para motorista",
@@ -145,8 +146,7 @@ class JobServiceTests {
                 "14:00",
                 "18:00",
                 150.0,
-                "Possuir moto própria",
-                1L
+                "Possuir moto própria"
         );
 
 
@@ -200,7 +200,7 @@ class JobServiceTests {
         when(jobRepository.findJobEntityByIdAndOpenIsTrue(1L)).thenReturn(Optional.of(job1));
         when(companyService.findCompanyByUser(user)).thenReturn(company);
 
-        jobService.closeJob(1L, user);
+        jobService.closeJob(1L);
 
         verify(jobRepository, times(1)).save(any(JobEntity.class));
     }

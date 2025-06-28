@@ -2,7 +2,7 @@ package com.vitrine_freelancers_server.controllers.jobs.response;
 
 import com.vitrine_freelancers_server.enums.JobType;
 
-public record JobReponse(
+public record JobResponse(
         Long id,
         JobType type,
         String position,
@@ -18,4 +18,5 @@ public record JobReponse(
         Long companyId,
         String companyName
 ) {
+
 }

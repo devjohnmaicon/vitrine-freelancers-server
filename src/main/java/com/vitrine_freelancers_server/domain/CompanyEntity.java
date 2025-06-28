@@ -3,18 +3,19 @@ package com.vitrine_freelancers_server.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder(toBuilder = true)
-@ToString(exclude = "jobs")
 @NoArgsConstructor
 @Entity(name = "companies")
 public class CompanyEntity {
@@ -25,12 +26,14 @@ public class CompanyEntity {
     @Column(unique = true)
     String name;
 
+
     @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     UserEntity user;
 
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    List<JobEntity> jobs;
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<JobEntity> jobs = new ArrayList<>();
 
     Boolean isActive = true;
 

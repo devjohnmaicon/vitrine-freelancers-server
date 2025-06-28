@@ -1,6 +1,7 @@
 package com.vitrine_freelancers_server.controllers.jobs;
 
-import com.vitrine_freelancers_server.controllers.jobs.requests.JobUpdateRequest;
+import com.vitrine_freelancers_server.controllers.jobs.requests.JobCreateOrUpdateRequest;
+import com.vitrine_freelancers_server.controllers.jobs.response.JobResponse;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.exceptions.response.ResponseSuccess;
@@ -26,10 +27,10 @@ public class JobController {
         this.jobService = jobService;
     }
 
-    private final String DEFAULT_STATUS = "success";
+    private final String DEFAULT_STATUS = "Success";
 
     @PostMapping
-    public ResponseEntity<?> createJob(@RequestBody JobUpdateRequest request) {
+    public ResponseEntity<?> createJob(@RequestBody JobCreateOrUpdateRequest request) {
         JobEntity createdJob = jobService.createJob(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseSuccess(DEFAULT_STATUS, HttpStatus.CREATED.value(), JobMapper.toResponse(createdJob)));
     }
@@ -42,7 +43,7 @@ public class JobController {
         try {
             Sort.Direction direction = sort.equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC;
             Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
-            Page<JobEntity> jobsOpen = jobService.findJobsOpen(pageable);
+            Page<JobEntity> jobsOpen = jobService.findAllJobsOpen(pageable);
             return ResponseEntity.ok(JobMapper.toResponse(jobsOpen.getContent()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -58,26 +59,34 @@ public class JobController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseSuccess> updateJob(@PathVariable Long id, @RequestBody JobUpdateRequest jobUpdate,
+    public ResponseEntity<ResponseSuccess> updateJob(@PathVariable Long id, @RequestBody JobCreateOrUpdateRequest jobUpdate,
                                                      @AuthenticationPrincipal UserEntity userPrincipal
     ) {
 
         JobEntity jobUpdated = jobService.updateJob(id, jobUpdate, userPrincipal);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseSuccess(
-                DEFAULT_STATUS, HttpStatus.OK.value(), JobMapper.toResponse(jobUpdated)));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseSuccess(
+                DEFAULT_STATUS, HttpStatus.ACCEPTED.value(), JobMapper.toResponse(jobUpdated)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseSuccess> closeJob(@PathVariable Long id, @AuthenticationPrincipal UserEntity userPrincipal) {
-        jobService.closeJob(id, userPrincipal);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseSuccess(DEFAULT_STATUS, HttpStatus.ACCEPTED.value(), null));
+    public ResponseEntity<ResponseSuccess> closeJob(@PathVariable Long id) {
+        jobService.closeJob(id);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseSuccess(DEFAULT_STATUS, HttpStatus.OK.value(), null));
     }
 
-    @GetMapping("/company")
-    public ResponseEntity<?> getJobsByCompany(@AuthenticationPrincipal UserEntity userPrincipal) {
-        List<JobEntity> jobsByCompany = jobService.findJobsByCompany(userPrincipal);
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseSuccess(DEFAULT_STATUS, HttpStatus.OK.value(), JobMapper.toResponse(jobsByCompany)));
+    @GetMapping("/company/{companyId}")
+    public ResponseEntity<ResponseSuccess> getJobsByCompany(@PathVariable Long companyId) {
+        List<JobResponse> jobs = jobService.findJobsByCompanyId(companyId);
 
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ResponseSuccess(DEFAULT_STATUS, HttpStatus.OK.value(), jobs));
     }
 
+    @GetMapping("/type/{id}")
+    public ResponseEntity<ResponseSuccess> getJobsByCategory(@PathVariable Long id) {
+        List<JobResponse> jobs = jobService.findByType(id);
+        return ResponseEntity.ok(new ResponseSuccess(
+                DEFAULT_STATUS, HttpStatus.OK.value(), jobs
+        ));
+    }
 }

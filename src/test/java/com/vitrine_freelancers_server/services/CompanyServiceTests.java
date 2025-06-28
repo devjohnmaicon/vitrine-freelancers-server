@@ -5,7 +5,6 @@ import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.enums.JobType;
-import com.vitrine_freelancers_server.enums.UserRole;
 import com.vitrine_freelancers_server.enums.UserStatus;
 import com.vitrine_freelancers_server.exceptions.CompanyAlreadyExistsException;
 import com.vitrine_freelancers_server.exceptions.CompanyNotFoundException;
@@ -156,7 +155,6 @@ public class CompanyServiceTests {
                 .email("")
                 .password("123456")
                 .status(UserStatus.ACTIVE)
-                .role(UserRole.COMPANY)
                 .updated_at(null)
                 .created_at(LocalDateTime.now())
                 .build();

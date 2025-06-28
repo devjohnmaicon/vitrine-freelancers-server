@@ -54,7 +54,7 @@ public class CompanyService {
     public CompanyEntity updateCompany(Long id, CreateCompanyDTO companyRequests, UserEntity user) {
         CompanyEntity company = companyById(id);
         if (!company.getUser().getId().equals(user.getId())) {
-            throw new UserNotAuthorizationException();
+            throw new UserNotAuthorizationException("Não autorizado a atualizar esta empresa");
         }
         company.setName(companyRequests.name());
         return companyRepository.save(company);

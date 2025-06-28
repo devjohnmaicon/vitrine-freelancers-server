@@ -2,6 +2,8 @@ package com.vitrine_freelancers_server.services;
 
 import com.vitrine_freelancers_server.controllers.authentication.*;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
+import com.vitrine_freelancers_server.domain.Permission;
+import com.vitrine_freelancers_server.domain.Role;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.enums.UserRole;
 import com.vitrine_freelancers_server.enums.UserStatus;
@@ -17,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,6 +39,8 @@ public class RegisterServiceTests {
 
     private UserEntity user;
     private CompanyEntity company;
+    private Role role;
+    private Permission permission;
     private CreateUserDTO userDTO;
     private CreateCompanyDTO companyDTO;
     private String token;
@@ -45,7 +50,9 @@ public class RegisterServiceTests {
         MockitoAnnotations.openMocks(this);
         userDTO = new CreateUserDTO("user 1", "user1@email", "123", UserRole.COMPANY);
         companyDTO = new CreateCompanyDTO("company 1");
-        user = new UserEntity(1L, "user 1", "user1@email", "123", UserStatus.ACTIVE, UserRole.COMPANY, LocalDateTime.now(), null);
+        permission = new Permission(1L, "PERMISSION_1");
+        role = new Role(1L, "COMPNY", "Descrição", Set.of(user), Set.of(permission));
+        user = new UserEntity(1L, "user 1", "user1@email", "123", UserStatus.ACTIVE, Set.of(role), company, LocalDateTime.now(), null);
         company = new CompanyEntity(1L, "company 1", user, List.of(), true, LocalDateTime.now(), LocalDateTime.now());
         token = "Bearer eyJhbGciOiJIUzI1NiJ9";
     }

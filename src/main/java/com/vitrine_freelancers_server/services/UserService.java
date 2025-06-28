@@ -12,6 +12,7 @@ import com.vitrine_freelancers_server.exceptions.UserEmailAlreadyExistsException
 import com.vitrine_freelancers_server.exceptions.UserNotFoundException;
 import com.vitrine_freelancers_server.infra.security.TokenService;
 import com.vitrine_freelancers_server.repositories.UserRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ public class UserService {
     public UserEntity createUser(CreateUserDTO userDTO) {
         checkIfUserExists(userDTO.email());
 
-        UserEntity user = UserEntity.builder().email(userDTO.email()).name(userDTO.name()).password(passwordEncoder.encode(userDTO.password())).status(UserStatus.ACTIVE).role(userDTO.role()).build();
+        UserEntity user = UserEntity.builder().email(userDTO.email()).name(userDTO.name()).password(passwordEncoder.encode(userDTO.password())).status(UserStatus.ACTIVE).build();
         ;
 
         return userRepository.save(user);
@@ -75,5 +76,9 @@ public class UserService {
         } else {
             throw new InvalidLoginException();
         }
+    }
+
+    public static Authentication getUser() {
+        return org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
     }
 }
