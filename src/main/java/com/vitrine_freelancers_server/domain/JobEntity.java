@@ -1,5 +1,6 @@
 package com.vitrine_freelancers_server.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.vitrine_freelancers_server.enums.JobType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,11 +9,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-@Data
+//@ToString(exclude = "company")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 @Entity(name = "jobs")
 public class JobEntity {
     @Id
@@ -28,13 +30,18 @@ public class JobEntity {
     String requirements;
     Boolean open = true;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "company_id", nullable = false)
-    CompanyEntity company;
+    private CompanyEntity company;
 
     @CreationTimestamp
     LocalDateTime createdAt = LocalDateTime.now();
     @UpdateTimestamp
     LocalDateTime updatedAt;
+
+    @JsonBackReference
+    public CompanyEntity getCompany() {
+        return company;
+    }
 
 }

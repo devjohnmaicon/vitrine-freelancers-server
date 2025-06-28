@@ -17,7 +17,7 @@ public class TokenService {
 
     public String generateToken(String email) {
         try {
-            return "Bearer " + Jwts.builder()
+            return Jwts.builder()
                     .setIssuer("vitrine_freelancers_server")
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + 86400000))

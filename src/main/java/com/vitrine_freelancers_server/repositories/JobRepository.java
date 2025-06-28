@@ -13,9 +13,9 @@ import java.util.Optional;
 public interface JobRepository extends JpaRepository<JobEntity, Long> {
     Page<JobEntity> findJobEntitiesByOpenIsTrue(Pageable pageable);
 
-    List<JobEntity> findJobEntitiesByCompanyId(Long id);
-
-    List<JobEntity> findTop3ByOpenIsTrueOrderByCreatedAtDesc();
+    List<JobEntity> findByCompanyId(Long id);
 
     Optional<JobEntity> findJobEntityByIdAndOpenIsTrue(Long id);
+
+    List<JobEntity> findJobEntityByType(Long typeId);
 }

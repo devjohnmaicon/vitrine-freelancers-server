@@ -25,15 +25,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public String handleRuntimeException(RuntimeException e) {
-        return e.getMessage();
+    public ResponseEntity<ResponseError> handleRuntimeException(RuntimeException e) {
+        ResponseError responseError = new ResponseError(
+                e.getMessage(),
+                "internal server error",
+                HttpStatus.FORBIDDEN.value()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseError);
     }
 
     @ExceptionHandler(UserNotAuthorizationException.class)
     public ResponseEntity<ResponseError> handleUserNotAuthorization(UserNotAuthorizationException e) {
         ResponseError responseError = new ResponseError(
                 e.getMessage(),
-                "not authorized",
+                "user not authorized",
                 HttpStatus.FORBIDDEN.value()
         );
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseError);

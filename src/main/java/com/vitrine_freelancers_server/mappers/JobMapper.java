@@ -1,14 +1,14 @@
 package com.vitrine_freelancers_server.mappers;
 
-import com.vitrine_freelancers_server.controllers.jobs.requests.JobUpdateRequest;
-import com.vitrine_freelancers_server.controllers.jobs.response.JobReponse;
+import com.vitrine_freelancers_server.controllers.jobs.requests.JobCreateOrUpdateRequest;
+import com.vitrine_freelancers_server.controllers.jobs.response.JobResponse;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 
 import java.util.List;
 
 public class JobMapper {
-    public static JobEntity toEntity(JobUpdateRequest jobUpdateRequest, CompanyEntity company) {
+    public static JobEntity toEntity(JobCreateOrUpdateRequest jobUpdateRequest, CompanyEntity company) {
         return JobEntity.builder()
                 .type(jobUpdateRequest.type())
                 .position(jobUpdateRequest.position())
@@ -23,8 +23,8 @@ public class JobMapper {
                 .build();
     }
 
-    public static JobUpdateRequest toDto(JobEntity jobEntity) {
-        return new JobUpdateRequest(
+    public static JobCreateOrUpdateRequest toDto(JobEntity jobEntity) {
+        return new JobCreateOrUpdateRequest(
                 jobEntity.getType(),
                 jobEntity.getPosition(),
                 jobEntity.getDescription(),
@@ -32,13 +32,12 @@ public class JobMapper {
                 jobEntity.getStartTime(),
                 jobEntity.getEndTime(),
                 jobEntity.getDailyValue(),
-                jobEntity.getRequirements(),
-                jobEntity.getCompany().getId()
+                jobEntity.getRequirements()
         );
     }
 
-    public static JobReponse toResponse(JobEntity job) {
-        return new JobReponse(
+    public static JobResponse toResponse(JobEntity job) {
+        return new JobResponse(
                 job.getId(),
                 job.getType(),
                 job.getPosition(),
@@ -56,7 +55,7 @@ public class JobMapper {
         );
     }
 
-    public static List<JobReponse> toResponse(List<JobEntity> jobs) {
+    public static List<JobResponse> toResponse(List<JobEntity> jobs) {
         return jobs.stream().map(JobMapper::toResponse).toList();
     }
 }

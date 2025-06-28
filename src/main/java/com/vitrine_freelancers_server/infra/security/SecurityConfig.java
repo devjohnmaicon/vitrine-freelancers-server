@@ -34,27 +34,24 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
                                 .requestMatchers(HttpMethod.GET, "/jobs/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/jobs/company/{companyId}").hasAnyRole("ADMIN", "COMPANY")
                                 .requestMatchers(HttpMethod.PUT, "/jobs/{id}").hasAnyRole("ADMIN", "COMPANY")
                                 .requestMatchers(HttpMethod.DELETE, "/jobs/{id}").hasAnyRole("ADMIN", "COMPANY")
                                 .requestMatchers(HttpMethod.GET, "/jobs").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/jobs").hasAnyRole("ADMIN", "COMPANY")
-                                .requestMatchers("/jobs/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/jobs/**").hasAnyRole("ADMIN", "COMPANY")
 
-//                        .requestMatchers(HttpMethod.GET, "/jobs/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/jobs/company").hasAnyRole("ADMIN", "COMPANY")
-//
                                 .requestMatchers("/users/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.GET, "/users/:id").hasAnyRole("ADMIN", "USER")
-//
+
                                 .requestMatchers(HttpMethod.GET, "/companies/{id}").permitAll()
                                 .requestMatchers("/companies/**").hasRole("ADMIN")
-//                        .requestMatchers(HttpMethod.PUT, "/companies/:id").hasAnyRole("ADMIN", "COMPANY")
-                                .anyRequest().authenticated()
+
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(
                         exceptionHandling -> exceptionHandling
                                 .authenticationEntryPoint((request, response, authException) -> {
-                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "UNAUTHORIZED");
                                 })
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
