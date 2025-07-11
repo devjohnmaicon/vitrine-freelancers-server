@@ -4,6 +4,6 @@ public class UserNotAuthorizationException extends RuntimeException {
     public UserNotAuthorizationException(
             String message
     ) {
-        super(message);
+        super(message != null && !message.isEmpty() ? message : "Usuário não autorizado");
     }
 }

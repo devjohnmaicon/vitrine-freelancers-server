@@ -1,5 +1,7 @@
-package com.vitrine_freelancers_server.controllers.authentication;
+package com.vitrine_freelancers_server.controllers.auth;
 
+import com.vitrine_freelancers_server.controllers.auth.requests.RegisterUserCompanyDTO;
+import com.vitrine_freelancers_server.controllers.auth.response.ResponseToken;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.infra.security.TokenService;
@@ -19,12 +21,12 @@ public class RegisterService {
     TokenService tokenService;
 
     @Transactional
-    public ResponseTokenDTO registerUserAndCompany(RegisterUserCompanyDTO userCompanyDTO) {
+    public ResponseToken registerUserAndCompany(RegisterUserCompanyDTO userCompanyDTO) {
         UserEntity createdUser = userService.createUser(userCompanyDTO.user());
         CompanyEntity createdCompany = companyService.createCompany(userCompanyDTO.company(), createdUser);
 
         String token = tokenService.generateToken(createdUser.getEmail());
 
-        return new ResponseTokenDTO(createdUser.getEmail(), createdCompany.getName(), token);
+        return new ResponseToken(createdUser.getEmail(), createdCompany.getName(), token);
     }
 }

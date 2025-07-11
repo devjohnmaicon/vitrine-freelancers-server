@@ -1,6 +1,10 @@
 package com.vitrine_freelancers_server.services;
 
-import com.vitrine_freelancers_server.controllers.authentication.*;
+import com.vitrine_freelancers_server.controllers.auth.RegisterService;
+import com.vitrine_freelancers_server.controllers.auth.dtos.CreateCompanyDTO;
+import com.vitrine_freelancers_server.controllers.auth.dtos.CreateUserDTO;
+import com.vitrine_freelancers_server.controllers.auth.requests.RegisterUserCompanyDTO;
+import com.vitrine_freelancers_server.controllers.auth.response.ResponseToken;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.Permission;
 import com.vitrine_freelancers_server.domain.Role;
@@ -64,7 +68,7 @@ public class RegisterServiceTests {
         when(companyService.createCompany(companyDTO, user)).thenReturn(company);
         when(tokenService.generateToken(user.getEmail())).thenReturn(token);
 
-        ResponseTokenDTO responseToken = registerService.registerUserAndCompany(requestUserAndCompanyDTO);
+        ResponseToken responseToken = registerService.registerUserAndCompany(requestUserAndCompanyDTO);
 
         verify(userService).createUser(userDTO);
         verify(companyService).createCompany(companyDTO, user);

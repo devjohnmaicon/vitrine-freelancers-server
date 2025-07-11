@@ -1,6 +1,6 @@
 package com.vitrine_freelancers_server.services;
 
-import com.vitrine_freelancers_server.controllers.authentication.CreateCompanyDTO;
+import com.vitrine_freelancers_server.controllers.auth.dtos.CreateCompanyDTO;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
@@ -137,7 +137,6 @@ public class CompanyServiceTests {
                 .name(companyFound.getName() + " - Desativada")
                 .isActive(false)
                 .build();
-        ;
 
         when(companyRepository.findById(companyId)).thenReturn(Optional.of(companyFound));
         when(companyRepository.save(any(CompanyEntity.class))).thenReturn(companyUpdated);

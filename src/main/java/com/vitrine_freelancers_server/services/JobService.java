@@ -31,10 +31,9 @@ public class JobService {
 
     private UserPrincipalDTO getUser() throws RuntimeException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipalDTO)) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipalDTO userPrincipal)) {
             throw new UserNotAuthorizationException("Usuário não autenticado ou não autorizado");
         }
-        UserPrincipalDTO userPrincipal = (UserPrincipalDTO) authentication.getPrincipal();
         return userPrincipal;
     }
 
@@ -77,6 +76,11 @@ public class JobService {
     }
 
     public List<JobResponse> findJobsByCompanyId(Long companyId) {
+        UserPrincipalDTO user = getUser();
+        if (!user.getCompanyId().equals(companyId)) {
+            throw new UserNotAuthorizationException("");
+        }
+
         List<JobEntity> jobsList = jobRepository.findByCompanyId(companyId);
         return jobsList.stream()
                 .map(JobMapper::toResponse)
@@ -93,8 +97,9 @@ public class JobService {
     public JobEntity userCanExecute(Long id) {
         UserPrincipalDTO user = getUser();
         JobEntity job = findJobByIdOpen(id);
-        if (!job.getCompany().getId().equals(user.getCompanyId()))
-            throw new UserNotAuthorizationException("Não autotizado a editar ou excluir esta vaga.");
+        boolean isAdmin = user.getAuthorities().contains("ROLE_ADMIN");
+        if (!job.getCompany().getId().equals(user.getCompanyId()) && !isAdmin)
+            throw new UserNotAuthorizationException("");
         return job;
     }
 

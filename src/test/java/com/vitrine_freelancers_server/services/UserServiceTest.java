@@ -1,6 +1,6 @@
 package com.vitrine_freelancers_server.services;
 
-import com.vitrine_freelancers_server.controllers.authentication.CreateUserDTO;
+import com.vitrine_freelancers_server.controllers.auth.dtos.CreateUserDTO;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.Permission;
 import com.vitrine_freelancers_server.domain.Role;

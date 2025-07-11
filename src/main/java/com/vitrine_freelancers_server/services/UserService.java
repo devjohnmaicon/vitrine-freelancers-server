@@ -1,8 +1,8 @@
 package com.vitrine_freelancers_server.services;
 
-import com.vitrine_freelancers_server.controllers.authentication.CreateUserDTO;
-import com.vitrine_freelancers_server.controllers.authentication.ResponseLoginDTO;
-import com.vitrine_freelancers_server.controllers.authentication.requests.LoginRequest;
+import com.vitrine_freelancers_server.controllers.auth.dtos.CreateUserDTO;
+import com.vitrine_freelancers_server.controllers.auth.requests.LoginRequest;
+import com.vitrine_freelancers_server.controllers.auth.response.ResponseLogin;
 import com.vitrine_freelancers_server.controllers.users.UserUpdateRequest;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.UserEntity;
@@ -38,7 +38,6 @@ public class UserService {
         checkIfUserExists(userDTO.email());
 
         UserEntity user = UserEntity.builder().email(userDTO.email()).name(userDTO.name()).password(passwordEncoder.encode(userDTO.password())).status(UserStatus.ACTIVE).build();
-        ;
 
         return userRepository.save(user);
     }
@@ -67,12 +66,12 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public ResponseLoginDTO login(LoginRequest requestDTO) {
+    public ResponseLogin login(LoginRequest requestDTO) {
         UserEntity user = userRepository.findByEmail(requestDTO.email()).orElseThrow(InvalidLoginException::new);
         CompanyEntity company = companyService.findCompanyByUser(user);
         if (passwordEncoder.matches(requestDTO.password(), user.getPassword())) {
             String token = tokenService.generateToken(user.getEmail());
-            return new ResponseLoginDTO(user.getEmail(), company.getId(), token);
+            return new ResponseLogin(user.getName(), company.getId(), token);
         } else {
             throw new InvalidLoginException();
         }

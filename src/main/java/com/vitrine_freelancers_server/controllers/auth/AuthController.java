@@ -1,6 +1,9 @@
-package com.vitrine_freelancers_server.controllers.authentication;
+package com.vitrine_freelancers_server.controllers.auth;
 
-import com.vitrine_freelancers_server.controllers.authentication.requests.LoginRequest;
+import com.vitrine_freelancers_server.controllers.auth.requests.LoginRequest;
+import com.vitrine_freelancers_server.controllers.auth.requests.RegisterUserCompanyDTO;
+import com.vitrine_freelancers_server.controllers.auth.response.ResponseLogin;
+import com.vitrine_freelancers_server.controllers.auth.response.ResponseToken;
 import com.vitrine_freelancers_server.exceptions.response.ResponseSuccess;
 import com.vitrine_freelancers_server.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +24,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<ResponseSuccess> register(@RequestBody RegisterUserCompanyDTO userCompanyDTO) {
-        ResponseTokenDTO response = registerCompanyService.registerUserAndCompany(userCompanyDTO);
+        ResponseToken response = registerCompanyService.registerUserAndCompany(userCompanyDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseSuccess("Usuário e empresa criados com sucesso", HttpStatus.CREATED.value(), response)
         );
@@ -29,7 +32,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseSuccess> login(@RequestBody LoginRequest requestDTO) {
-        ResponseLoginDTO response = userService.login(requestDTO);
+        ResponseLogin response = userService.login(requestDTO);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseSuccess("Login realizado com sucesso", HttpStatus.OK.value(), response)
         );
