@@ -21,6 +21,10 @@ public class Role {
     private String name;
     private String description;
 
+    public Role(String name) {
+        this.name = name;
+    }
+
     @ManyToMany(mappedBy = "roles")
     private Set<UserEntity> users = new HashSet<>();
 

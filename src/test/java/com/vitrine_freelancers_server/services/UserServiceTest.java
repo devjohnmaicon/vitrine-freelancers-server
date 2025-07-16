@@ -9,6 +9,7 @@ import com.vitrine_freelancers_server.enums.UserRole;
 import com.vitrine_freelancers_server.enums.UserStatus;
 import com.vitrine_freelancers_server.exceptions.UserEmailAlreadyExistsException;
 import com.vitrine_freelancers_server.repositories.UserRepository;
+import com.vitrine_freelancers_server.utils.MockDataFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.time.LocalDateTime;
-import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -45,14 +43,13 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        permission = new Permission(1L, "PERMISSION_1");
-        role = new Role(1L, "COMPNY", "Descrição", Set.of(user), Set.of(permission));
-        user = new UserEntity(1L, "user 1", "user1@email", "12345", UserStatus.ACTIVE, Set.of(role), company, LocalDateTime.now(), null);
+        permission = MockDataFactory.createPermission();
+        user = MockDataFactory.createUser();
     }
 
     @Test
     void shouldCreateUserSuccessfully() {
-        CreateUserDTO userDTO = new CreateUserDTO("user1@email.com", "123456", "User 1", UserRole.COMPANY);
+        CreateUserDTO userDTO = new CreateUserDTO("user@email", "123456", "User 1", UserRole.COMPANY);
 
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(userRepository.save(any(UserEntity.class))).thenReturn(user);
@@ -70,7 +67,7 @@ public class UserServiceTest {
 
     @Test
     void testCreateUserWithExistingEmail() {
-        CreateUserDTO userDTO = new CreateUserDTO("user1@email.com", "123456", "User 1", UserRole.COMPANY);
+        CreateUserDTO userDTO = new CreateUserDTO("user@email.com", "123456", "User 1", UserRole.COMPANY);
 
         when(userRepository.existsByEmail(userDTO.email())).thenReturn(true);
         RuntimeException exception = Assertions.assertThrows(UserEmailAlreadyExistsException.class, () -> {

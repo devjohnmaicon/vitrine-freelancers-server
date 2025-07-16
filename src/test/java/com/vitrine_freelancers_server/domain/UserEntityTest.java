@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,10 +18,17 @@ public class UserEntityTest {
     public void sholdReturnAuthorities() {
         UserEntity adminUser = UserEntity.builder()
                 .email("admin@example.com")
+                .roles(Set.of(
+                        new Role("ROLE_ADMIN"),
+                        new Role("ROLE_COMPANY")
+                ))
                 .build();
 
         UserEntity companyUser = UserEntity.builder()
                 .email("company@example.com")
+                .roles(Set.of(
+                        new Role("ROLE_COMPANY")
+                ))
                 .build();
 
         var adminAuthorities = adminUser.getAuthorities();

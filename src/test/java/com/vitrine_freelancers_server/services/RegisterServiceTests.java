@@ -10,8 +10,8 @@ import com.vitrine_freelancers_server.domain.Permission;
 import com.vitrine_freelancers_server.domain.Role;
 import com.vitrine_freelancers_server.domain.UserEntity;
 import com.vitrine_freelancers_server.enums.UserRole;
-import com.vitrine_freelancers_server.enums.UserStatus;
 import com.vitrine_freelancers_server.infra.security.TokenService;
+import com.vitrine_freelancers_server.utils.MockDataFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,10 +21,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,21 +49,26 @@ public class RegisterServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        userDTO = new CreateUserDTO("user 1", "user1@email", "123", UserRole.COMPANY);
-        companyDTO = new CreateCompanyDTO("company 1");
-        permission = new Permission(1L, "PERMISSION_1");
-        role = new Role(1L, "COMPNY", "Descrição", Set.of(user), Set.of(permission));
-        user = new UserEntity(1L, "user 1", "user1@email", "123", UserStatus.ACTIVE, Set.of(role), company, LocalDateTime.now(), null);
-        company = new CompanyEntity(1L, "company 1", user, List.of(), true, LocalDateTime.now(), LocalDateTime.now());
+        setupTestData();
         token = "Bearer eyJhbGciOiJIUzI1NiJ9";
+    }
+
+    private void setupTestData() {
+        permission = MockDataFactory.createPermission();
+        company = MockDataFactory.createCompany(null, null);
+        user = MockDataFactory.createUser();
     }
 
     @Test
     public void testRegisterUserAndCompanySuccess() {
+        // Given
+        userDTO = new CreateUserDTO("user@email", "password123", "John Doe", UserRole.COMPANY);
+        companyDTO = new CreateCompanyDTO("Farmácia do João");
         RegisterUserCompanyDTO requestUserAndCompanyDTO = new RegisterUserCompanyDTO(userDTO, companyDTO);
+
         when(userService.createUser(userDTO)).thenReturn(user);
         when(companyService.createCompany(companyDTO, user)).thenReturn(company);
-        when(tokenService.generateToken(user.getEmail())).thenReturn(token);
+        when(tokenService.generateToken(anyString())).thenReturn(token);
 
         ResponseToken responseToken = registerService.registerUserAndCompany(requestUserAndCompanyDTO);
 
@@ -74,9 +76,10 @@ public class RegisterServiceTests {
         verify(companyService).createCompany(companyDTO, user);
         verify(tokenService).generateToken(user.getEmail());
 
-        Assertions.assertNotNull(token);
-        Assertions.assertEquals(user.getEmail(), responseToken.email());
-        Assertions.assertEquals(company.getName(), responseToken.company());
+        Assertions.assertNotNull(responseToken);
+        Assertions.assertNotNull(responseToken.token());
+        Assertions.assertEquals(userDTO.email(), responseToken.email());
+        Assertions.assertEquals(companyDTO.name(), responseToken.company());
         Assertions.assertEquals(token, responseToken.token());
     }
 

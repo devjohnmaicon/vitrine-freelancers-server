@@ -29,7 +29,7 @@ public class JobService {
     @Autowired
     private CompanyService companyService;
 
-    private UserPrincipalDTO getUser() throws RuntimeException {
+    public UserPrincipalDTO getUser() throws RuntimeException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipalDTO userPrincipal)) {
             throw new UserNotAuthorizationException("Usuário não autenticado ou não autorizado");
