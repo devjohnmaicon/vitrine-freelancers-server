@@ -29,6 +29,7 @@ public class JobEntity {
     Double dailyValue;
     String requirements;
     Boolean open = true;
+    LocalDateTime openUntil;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "company_id", nullable = false)

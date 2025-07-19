@@ -2,6 +2,8 @@ package com.vitrine_freelancers_server.controllers.jobs.response;
 
 import com.vitrine_freelancers_server.enums.JobType;
 
+import java.time.LocalDateTime;
+
 public record JobResponse(
         Long id,
         JobType type,
@@ -13,8 +15,9 @@ public record JobResponse(
         Double dailyValue,
         String requirements,
         Boolean open,
-        String createdAt,
-        String updatedAt,
+        LocalDateTime openUntil,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
         Long companyId,
         String companyName
 ) {

@@ -49,7 +49,10 @@ public class MockDataFactory {
     }
 
     public static JobEntity createJobEntity(
-            String position
+            String position,
+            LocalDateTime openUntil,
+            CompanyEntity company
+
     ) {
         return new JobEntity(
                 JOB_ID,
@@ -62,9 +65,10 @@ public class MockDataFactory {
                 100.0,
                 "Possuir moto própria",
                 true,
-                createCompany(null, null),
+                openUntil != null ? openUntil : LocalDateTime.now().plusHours(5),
+                company != null ? company : createCompany(null, null),
                 LocalDateTime.now(),
-                LocalDateTime.now()
+                null
         );
     }
 

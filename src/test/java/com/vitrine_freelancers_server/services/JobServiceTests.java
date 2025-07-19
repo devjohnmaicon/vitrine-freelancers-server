@@ -15,10 +15,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
@@ -60,7 +57,7 @@ class JobServiceTests {
         permission = MockDataFactory.createPermission();
         company = MockDataFactory.createCompany(null, null);
         user = MockDataFactory.createUser();
-        job = MockDataFactory.createJobEntity(null);
+        job = MockDataFactory.createJobEntity(null, LocalDateTime.now().plusHours(8), null);
         userPrincipal = MockDataFactory.createUserPrincipal();
     }
 
@@ -74,31 +71,34 @@ class JobServiceTests {
                 "14:00",
                 "18:00",
                 100.0,
-                "Possuir moto própria"
-        );
-        JobEntity jobEntity = new JobEntity(
-                1L,
-                JobType.FREELANCER,
-                "deliveryman",
-                "Vaga para motoentregador",
-                "2021-10-10",
-                "14:00",
-                "18:00",
-                100.0,
                 "Possuir moto própria",
-                true,
-                this.company,
-                LocalDateTime.now(),
-                LocalDateTime.now()
+                10
         );
 
         when(companyService.companyById(anyLong())).thenReturn(company);
-        when(jobRepository.save(any(JobEntity.class))).thenReturn(jobEntity);
+        ArgumentCaptor<JobEntity> jobCaptor = ArgumentCaptor.forClass(JobEntity.class);
+        when(jobRepository.save(any(JobEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         JobEntity result = jobService.createJob(request);
 
         assertNotNull(result);
-        verify(jobRepository, times(1)).save(any(JobEntity.class));
+        assertEquals(request.type(), result.getType());
+        assertEquals(request.position(), result.getPosition());
+        assertEquals(request.description(), result.getDescription());
+        assertEquals(request.date(), result.getDate());
+        assertEquals(request.startTime(), result.getStartTime());
+        assertEquals(request.endTime(), result.getEndTime());
+        assertEquals(request.dailyValue(), result.getDailyValue());
+        assertEquals(request.requirements(), result.getRequirements());
+        assertEquals(company, result.getCompany());
+
+        verify(companyService, times(1)).companyById(anyLong());
+        verify(jobRepository, times(1)).save(jobCaptor.capture());
+
+        JobEntity savedJob = jobCaptor.getValue();
+        assertNotNull(savedJob);
+        assertEquals(request.position(), savedJob.getPosition());
+        assertEquals(company, savedJob.getCompany());
     }
 
     @Test
@@ -142,7 +142,8 @@ class JobServiceTests {
                 "14:00",
                 "18:00",
                 150.0,
-                "Possuir moto própria"
+                "Possuir moto própria",
+                8
         );
 
         when(jobRepository.findById(1L)).thenReturn(Optional.of(job));
@@ -168,6 +169,7 @@ class JobServiceTests {
                 150.0,
                 "Possuir moto própria",
                 false,
+                LocalDateTime.now().plusDays(8),
                 company,
                 LocalDateTime.now(),
                 LocalDateTime.now()

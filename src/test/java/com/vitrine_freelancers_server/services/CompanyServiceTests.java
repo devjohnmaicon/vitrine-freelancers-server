@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,9 +44,9 @@ public class CompanyServiceTests {
         company = MockDataFactory.createCompany(
                 user,
                 List.of(
-                        MockDataFactory.createJobEntity("deliveryman"),
-                        MockDataFactory.createJobEntity("sushiman"),
-                        MockDataFactory.createJobEntity("sushiman")
+                        MockDataFactory.createJobEntity("deliveryman", LocalDateTime.now().plusHours(8), null),
+                        MockDataFactory.createJobEntity("sushiman", LocalDateTime.now().plusHours(8), null),
+                        MockDataFactory.createJobEntity("sushiman", LocalDateTime.now().plusHours(8), null)
                 )
         );
     }

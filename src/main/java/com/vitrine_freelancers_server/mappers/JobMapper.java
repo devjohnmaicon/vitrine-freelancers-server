@@ -5,6 +5,7 @@ import com.vitrine_freelancers_server.controllers.jobs.response.JobResponse;
 import com.vitrine_freelancers_server.domain.CompanyEntity;
 import com.vitrine_freelancers_server.domain.JobEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class JobMapper {
@@ -20,20 +21,8 @@ public class JobMapper {
                 .requirements(jobUpdateRequest.requirements())
                 .company(company)
                 .open(true)
+                .openUntil(LocalDateTime.now().plusHours(jobUpdateRequest.openForHours()).withMinute(0).withSecond(0).withNano(0))
                 .build();
-    }
-
-    public static JobCreateOrUpdateRequest toDto(JobEntity jobEntity) {
-        return new JobCreateOrUpdateRequest(
-                jobEntity.getType(),
-                jobEntity.getPosition(),
-                jobEntity.getDescription(),
-                jobEntity.getDate(),
-                jobEntity.getStartTime(),
-                jobEntity.getEndTime(),
-                jobEntity.getDailyValue(),
-                jobEntity.getRequirements()
-        );
     }
 
     public static JobResponse toResponse(JobEntity job) {
@@ -48,8 +37,9 @@ public class JobMapper {
                 job.getDailyValue(),
                 job.getRequirements(),
                 job.getOpen(),
-                job.getCreatedAt().toString(),
-                job.getUpdatedAt().toString(),
+                job.getOpenUntil(),
+                job.getCreatedAt(),
+                job.getUpdatedAt(),
                 job.getCompany().getId(),
                 job.getCompany().getName()
         );

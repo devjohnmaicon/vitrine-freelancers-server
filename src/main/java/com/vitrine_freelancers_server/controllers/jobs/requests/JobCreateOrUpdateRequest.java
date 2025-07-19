@@ -10,7 +10,8 @@ public record JobCreateOrUpdateRequest(
         String startTime,
         String endTime,
         Double dailyValue,
-        String requirements
+        String requirements,
+        Integer openForHours
 ) {
 }
 
