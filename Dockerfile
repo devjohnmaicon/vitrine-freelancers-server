@@ -1,17 +1,21 @@
-FROM ubuntu:latest
+# Estágio de build
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 LABEL authors="john.maicon"
 
-RUN apt-get update && apt-get install -y procps
-RUN apt-get install openjdk-21-jre -y
-RUN . .
+# Copia TODOS os arquivos do projeto
+COPY . .
 
-RUN apt-get install maven -y
-RUN mvn clean install
+# Compila o projeto com encoding UTF-8
+RUN mvn clean package -DskipTests
 
-FROM openjdk:21-jre-slim
+# Estágio de produção
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
 
 EXPOSE 8080
 
-COPY --from=build /app/target/m7-ch-platform-server-*-exec.jar app.jar
+# Copia o JAR do estágio de build
+COPY --from=build /target/*.jar app.jar
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
