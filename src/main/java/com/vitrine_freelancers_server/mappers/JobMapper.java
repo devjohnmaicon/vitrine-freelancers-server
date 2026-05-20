@@ -21,7 +21,7 @@ public class JobMapper {
                 .requirements(jobUpdateRequest.requirements())
                 .company(company)
                 .open(true)
-                .openUntil(LocalDateTime.now().plusHours(jobUpdateRequest.openForHours()).withMinute(0).withSecond(0).withNano(0))
+                .openUntil(LocalDateTime.now().plusHours(jobUpdateRequest.openForHours() != null ? jobUpdateRequest.openForHours() : 12).withMinute(0).withSecond(0).withNano(0))
                 .build();
     }
 
@@ -41,7 +41,9 @@ public class JobMapper {
                 job.getCreatedAt(),
                 job.getUpdatedAt(),
                 job.getCompany().getId(),
-                job.getCompany().getName()
+                job.getCompany().getName(),
+                job.getApplicationsCount() != null ? job.getApplicationsCount() : 0,
+                job.getHasNewApplications() != null && job.getHasNewApplications()
         );
     }
 

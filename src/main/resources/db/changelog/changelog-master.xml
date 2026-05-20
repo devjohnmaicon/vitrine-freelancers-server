@@ -9,4 +9,14 @@
         <sqlFile path="../scripts/initial_create_tables.sql" relativeToChangelogFile="true" splitStatements="true"
                  stripComments="true"/>
     </changeSet>
+
+    <changeSet id="202507152334" author="John Maicon">
+        <sqlFile path="../scripts/002_add_job_application_fields.sql" relativeToChangelogFile="true" splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="202507152335" author="John Maicon">
+        <sqlFile path="../scripts/003_create_applications_table.sql" relativeToChangelogFile="true" splitStatements="true"
+                 stripComments="true"/>
+    </changeSet>
 </databaseChangeLog>

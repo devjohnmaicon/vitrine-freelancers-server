@@ -41,6 +41,12 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/jobs").hasAnyRole("ADMIN", "COMPANY")
                         .requestMatchers("/jobs/**").hasAnyRole("ADMIN", "COMPANY")
 
+                                .requestMatchers(HttpMethod.POST, "/applications").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/applications/my").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/applications/job/**").hasAnyRole("ADMIN", "COMPANY")
+                                .requestMatchers(HttpMethod.PATCH, "/applications/**").hasAnyRole("ADMIN", "COMPANY")
+                                .requestMatchers("/applications/**").authenticated()
+
                                 .requestMatchers("/users/**").hasRole("ADMIN")
 
                                 .requestMatchers(HttpMethod.GET, "/companies/{id}").permitAll()

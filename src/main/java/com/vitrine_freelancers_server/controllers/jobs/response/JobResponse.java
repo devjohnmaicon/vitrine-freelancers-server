@@ -19,7 +19,9 @@ public record JobResponse(
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         Long companyId,
-        String companyName
+        String companyName,
+        Integer applicationsCount,
+        Boolean hasNewApplications
 ) {
 
 }

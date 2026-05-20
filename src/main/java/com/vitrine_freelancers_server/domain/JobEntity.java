@@ -30,6 +30,8 @@ public class JobEntity {
     String requirements;
     Boolean open = true;
     LocalDateTime openUntil;
+    Integer applicationsCount = 0;
+    Boolean hasNewApplications = false;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "company_id", nullable = false)
